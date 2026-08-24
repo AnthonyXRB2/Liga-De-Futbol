@@ -15,7 +15,6 @@ if ($_SESSION["rol"] != "admin") {
 <!DOCTYPE html>
 <html>
 <head>
-    a
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Agregar Club</title>
     <link rel="stylesheet" href="estilo.css">
