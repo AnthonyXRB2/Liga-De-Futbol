@@ -21,7 +21,7 @@ FROM usuarios
 WHERE id='$id'
 ");
 
-$usuario = mysqli_fetch_assoc($consulta);
+$usuarioSeleccionado = mysqli_fetch_assoc($consulta);
 
 if(isset($_POST["guardar"])){
 
@@ -51,7 +51,7 @@ if(isset($_POST["guardar"])){
 
 <h2>Cambiar Contraseña</h2>
 
-<p><b>Usuario:</b> <?php echo $usuario["usuario"]; ?></p>
+<p><b>Usuario:</b> <?php echo $usuarioSeleccionado["usuario"]; ?></p>
 
 <form method="POST">
 

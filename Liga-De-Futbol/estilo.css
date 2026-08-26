@@ -1,8 +1,12 @@
-body{
-    margin:0;
-    font-family:Segoe UI, Arial, sans-serif;
-    background:#f4f6f9;
-    color:#333;
+:root{
+    --color-fondo:#f4f6f9;
+    --color-texto:#333;
+    --color-sidebar:#373c68;
+    --color-superficie:#fff;
+    --color-azul:#1e94f5;
+    --color-verde:#0a5828;
+    --color-borde:#ddd;
+    --sombra-suave:0 2px 8px rgba(0,0,0,.15);
 }
 
 *,
@@ -12,17 +16,12 @@ body{
 }
 
 body{
+    margin:0;
+    font-family:Segoe UI, Arial, sans-serif;
     padding:64px 16px 24px;
+    background:var(--color-fondo);
+    color:var(--color-texto);
     cursor:default;
-    user-select:none;
-}
-
-/* Los campos editables conservan la selección y el cursor de escritura. */
-input,
-textarea,
-select{
-    cursor:text;
-    user-select:text;
 }
 
 .encabezado-principal{
@@ -38,7 +37,7 @@ select{
     left:0;
     width:260px;
     overflow-y:auto;
-    background:#373c68;
+    background:var(--color-sidebar);
     box-shadow:2px 0 12px rgba(0,0,0,.18);
     transform:translateX(-100%);
     transition:transform .25s ease;
@@ -73,7 +72,7 @@ select{
 
 .boton-menu:hover,
 .boton-menu:focus{
-    background:#1e94f5;
+    background:var(--color-azul);
 }
 
 .fondo-sidebar{
@@ -126,7 +125,7 @@ select{
 }
 
 .navegacion-principal{
-    background:#373c68;
+    background:var(--color-sidebar);
     padding:14px 12px;
     display:flex;
     flex-direction:column;
@@ -151,7 +150,7 @@ select{
 .navegacion-principal > a:focus,
 .menu-desplegable summary:hover,
 .menu-desplegable summary:focus{
-    background:#1e94f5;
+    background:var(--color-azul);
 }
 
 .menu-desplegable{ position:relative; }
@@ -176,7 +175,7 @@ select{
 }
 
 .opciones-menu a:hover,
-.opciones-menu a:focus{ color:white; background:#1e94f5; }
+.opciones-menu a:focus{ color:white; background:var(--color-azul); }
 
 hr{
     display:none;
@@ -185,7 +184,7 @@ hr{
 h2{
     text-align:center;
     margin-top:30px;
-    color:#0a5828;
+    color:var(--color-verde);
 }
 
 p{
@@ -197,8 +196,10 @@ table{
     width:95%;
     margin:25px auto;
     border-collapse:collapse;
-    background:white;
-    box-shadow:0 2px 8px rgba(0,0,0,.15);
+    overflow:hidden;
+    background:var(--color-superficie);
+    border-radius:10px;
+    box-shadow:var(--sombra-suave);
 }
 
 table th{
@@ -210,7 +211,7 @@ table th{
 table td{
     padding:10px;
     text-align:center;
-    border-bottom:1px solid #ddd;
+    border-bottom:1px solid var(--color-borde);
 }
 
 tr:hover{
@@ -220,7 +221,7 @@ tr:hover{
 form{
     width:min(500px, 100%);
     margin:30px auto;
-    background:white;
+    background:var(--color-superficie);
     padding:25px;
     border-radius:10px;
     box-shadow:0 2px 10px rgba(0,0,0,.15);
@@ -245,6 +246,7 @@ button{
     padding:10px 20px;
     border-radius:8px;
     cursor:pointer;
+    font-size:15px;
     transition:.3s;
 }
 
@@ -268,17 +270,25 @@ button:hover{
     gap:14px;
 }
 
+input:focus,
+select:focus,
+textarea:focus{
+    outline:none;
+    border-color:#08662c;
+    box-shadow:0 0 0 1px #08662c;
+}
+
 .comunicado{
     padding:18px 22px;
-    border-left:5px solid #1e94f5;
+    border-left:5px solid var(--color-azul);
     border-radius:8px;
-    background:white;
-    box-shadow:0 2px 8px rgba(0,0,0,.12);
+    background:var(--color-superficie);
+    box-shadow:var(--sombra-suave);
 }
 
 .comunicado h3{
     margin:0 0 8px;
-    color:#0a5828;
+    color:var(--color-verde);
 }
 
 .comunicado p,
@@ -313,47 +323,20 @@ button:hover{
 }
 
 .bienvenida{
-
     width:70%;
     margin:40px auto;
-    background:white;
+    background:var(--color-superficie);
     border-radius:10px;
     padding:35px;
     box-shadow:0 2px 12px rgba(0,0,0,.15);
-
 }
 
 .bienvenida h2{
-
     margin-top:0;
-
 }
 
 .bienvenida h3{
-
     color:#570885;
-
-}
-
-button{
-
-    font-size:15px;
-
-}
-
-input:focus,
-select:focus{
-
-    outline:none;
-    border:2px solid #08662c;
-
-}
-
-table{
-
-    border-radius:10px;
-    overflow:hidden;
-
 }
 
 .dashboard{
@@ -364,19 +347,12 @@ table{
 }
 
 .card{
-
     width:200px;
-
-    background:white;
-
+    background:var(--color-superficie);
     border-radius:12px;
-
     padding:20px;
-
     text-align:center;
-
     box-shadow:0px 2px 10px rgba(0,0,0,0.2);
-
     transition:.2s;
 }
 
@@ -387,19 +363,13 @@ table{
 }
 
 .card h3{
-
     margin-bottom:15px;
-
 }
 
 .card p{
-
     font-size:32px;
-
     font-weight:bold;
-
     color:#162738;
-
 }
 
 @media (max-width:600px){
