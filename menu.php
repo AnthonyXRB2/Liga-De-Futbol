@@ -22,40 +22,44 @@ $rolVisible = htmlspecialchars($rol, ENT_QUOTES, 'UTF-8');
     </header>
 
     <nav class="navegacion-principal" aria-label="Navegación principal">
-        <a href="index.php">Inicio</a>
-
-        <details class="menu-desplegable">
-        <summary>Gestión</summary>
-        <div class="opciones-menu">
-            <a href="clubes.php">Clubes</a>
+        <?php if ($rol === 'club') { ?>
+            <a href="index.php">Inicio</a>
             <a href="jugadores.php">Jugadores</a>
-            <a href="partidos.php">Partidos</a>
-            <a href="tabla_posiciones.php">Tabla</a>
-        </div>
-        </details>
-
-        <details class="menu-desplegable">
-        <summary>Administración</summary>
-        <div class="opciones-menu">
-            <?php if ($rol === 'admin') { ?>
-                <a href="usuarios.php">Usuarios</a>
-            <?php } ?>
-            <a href="cambiar_password.php">Contraseña</a>
-            <a href="ver_tarjetas.php">Sanciones</a>
-            <?php if ($rol === 'admin') { ?>
-                <a href="agregar_tarjeta.php">Tarjetas</a>
-            <?php } ?>
-        </div>
-        </details>
-
-        <details class="menu-desplegable">
-        <summary>Publicaciones</summary>
-        <div class="opciones-menu">
+            <a href="ver_documentos.php">Documentos del club</a>
             <a href="comunicados.php">Comunicados</a>
-            <a href="subir_documentos.php">Documentos</a>
-            <a href="ver_documentos.php">Ver Docs</a>
-        </div>
-        </details>
+            <a href="subir_documentos.php">Subir ficha médica</a>
+            <a href="cambiar_password.php">Contraseña</a>
+        <?php } else { ?>
+            <a href="index.php">Inicio</a>
+
+            <details class="menu-desplegable">
+            <summary>Gestión</summary>
+            <div class="opciones-menu">
+                <a href="clubes.php">Clubes</a>
+                <a href="jugadores.php">Jugadores</a>
+                <a href="partidos.php">Partidos</a>
+            </div>
+            </details>
+
+            <details class="menu-desplegable">
+            <summary>Administración</summary>
+            <div class="opciones-menu">
+                <?php if ($rol === 'admin') { ?>
+                    <a href="usuarios.php">Usuarios</a>
+                <?php } ?>
+                <a href="cambiar_password.php">Contraseña</a>
+            </div>
+            </details>
+
+            <details class="menu-desplegable">
+            <summary>Publicaciones</summary>
+            <div class="opciones-menu">
+                <a href="comunicados.php">Comunicados</a>
+                <a href="subir_documentos.php">Documentos</a>
+                <a href="ver_documentos.php">Ver Docs</a>
+            </div>
+            </details>
+        <?php } ?>
     </nav>
     <a class="cerrar-sesion" href="logout.php">Cerrar sesión</a>
 </aside>

@@ -72,7 +72,13 @@ while($club = mysqli_fetch_assoc($clubes)){
 <input type="text" name="ci"><br><br>
 
 <label>Categoría</label><br>
-<input type="text" name="categoria" placeholder="Ej: 2013, 2015, Femenino"><br><br>
+<select name="categoria">
+    <option value="">Selecciona una categoría</option>
+    <?php foreach (range(2013, 2019) as $anio): ?>
+        <option value="<?php echo $anio; ?>"><?php echo $anio; ?></option>
+    <?php endforeach; ?>
+    <option value="Femenina">Femenina</option>
+</select><br><br>
 
 <button type="submit">Guardar</button>
 

@@ -1,5 +1,6 @@
 <?php
 session_start();
+include('restringir_club.php');
 
 if (!isset($_SESSION['usuario'])) {
     header('Location: login.php');
@@ -39,6 +40,14 @@ $esAdmin = ($_SESSION['rol'] ?? '') === 'admin';
                 <article class="comunicado">
                     <h3><?php echo htmlspecialchars($comunicado['titulo'], ENT_QUOTES, 'UTF-8'); ?></h3>
                     <p><?php echo nl2br(htmlspecialchars($comunicado['mensaje'], ENT_QUOTES, 'UTF-8')); ?></p>
+
+                    <?php if ($esAdmin) { ?>
+                        <p class="acciones-comunicados">
+                            <a href="eliminar_comunicado.php?id=<?php echo (int)$comunicado['id']; ?>" onclick="return confirm('¿Eliminar este comunicado?');">
+                                <button type="button">Eliminar comunicado</button>
+                            </a>
+                        </p>
+                    <?php } ?>
                 </article>
             <?php } ?>
         </div>

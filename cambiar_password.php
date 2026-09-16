@@ -1,5 +1,6 @@
 <?php
 session_start();
+include('restringir_club.php');
 if(!isset($_SESSION["usuario"])){
     header("Location: login.php");
     exit();

@@ -3,20 +3,16 @@ session_start();
 
 include("conexion.php");
 
-$usuario = $_POST["usuario"];
-$password = $_POST["password"];
+$usuario = $_POST["usuario"] ?? '';
+$password = $_POST["password"] ?? '';
 
-// Esto se puede mejorar después con contraseñas cifradas
+$stmt = $conn->prepare("SELECT id, usuario, rol, club_id FROM usuarios WHERE usuario = ? AND password = ?");
+$stmt->bind_param("ss", $usuario, $password);
+$stmt->execute();
+$resultado = $stmt->get_result();
 
-$sql = "SELECT * FROM usuarios
-WHERE usuario='$usuario'
-AND password='$password'";
-
-$consulta = mysqli_query($conn, $sql);
-
-if(mysqli_num_rows($consulta) > 0){
-
-    $datos = mysqli_fetch_assoc($consulta);
+if ($resultado && $resultado->num_rows > 0) {
+    $datos = $resultado->fetch_assoc();
 
     $_SESSION["id"] = $datos["id"];
     $_SESSION["usuario"] = $datos["usuario"];
@@ -24,10 +20,10 @@ if(mysqli_num_rows($consulta) > 0){
     $_SESSION["club_id"] = $datos["club_id"];
 
     header("Location: index.php");
-
-}else{
-
-    echo "Usuario o Contraseña incorrectos.";
-
+    exit();
 }
+
+$_SESSION['error_login'] = 'Usuario o contraseña incorrectos.';
+header('Location: login.php');
+exit();
 ?>

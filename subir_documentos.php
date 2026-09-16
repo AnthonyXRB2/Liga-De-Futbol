@@ -7,55 +7,49 @@ if (!isset($_SESSION["usuario"])) {
 }
 
 include("conexion.php");
+
+$rol = $_SESSION["rol"] ?? "";
+$mensaje = $_GET["error"] ?? "";
+$exito = $_GET["ok"] ?? "";
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Subir Documentos</title>
+    <title>Subir ficha médica</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
 
 <?php include("menu.php"); ?>
 
-<h2>Subir Ficha Médica y Carnet de Salud</h2>
+<h2>Subir ficha médica</h2>
+
+<?php if ($mensaje !== "") { ?>
+    <p class="mensaje-error"><?php echo htmlspecialchars($mensaje, ENT_QUOTES, "UTF-8"); ?></p>
+<?php } ?>
+
+<?php if ($exito !== "") { ?>
+    <p class="mensaje-exito"><?php echo htmlspecialchars($exito, ENT_QUOTES, "UTF-8"); ?></p>
+<?php } ?>
 
 <form action="guardar_documentos.php" method="POST" enctype="multipart/form-data">
 
-<label>Jugador</label><br>
+<?php if ($rol === "admin") { ?>
+<label>Club</label><br>
 
-<select name="jugador_id">
+<select name="club_id" required>
+    <option value="">Seleccionar club</option>
 
 <?php
+$clubes = mysqli_query($conn, "SELECT id, nombre FROM clubes WHERE activo = 1 ORDER BY nombre");
 
-if($_SESSION["rol"]=="admin"){
-
-    $consulta=mysqli_query($conn,"
-        SELECT *
-        FROM jugadores
-        ORDER BY nombre
-    ");
-
-}else{
-
-    $club=$_SESSION["club_id"];
-
-    $consulta=mysqli_query($conn,"
-        SELECT *
-        FROM jugadores
-        WHERE club_id='$club'
-        ORDER BY nombre
-    ");
-
-}
-
-while($fila=mysqli_fetch_assoc($consulta)){
+while ($club = mysqli_fetch_assoc($clubes)) {
 ?>
 
-<option value="<?php echo $fila["id"]; ?>">
-    <?php echo $fila["nombre"]; ?>
+<option value="<?php echo (int) $club["id"]; ?>">
+    <?php echo htmlspecialchars($club["nombre"], ENT_QUOTES, "UTF-8"); ?>
 </option>
 
 <?php } ?>
@@ -63,23 +57,14 @@ while($fila=mysqli_fetch_assoc($consulta)){
 </select>
 
 <br><br>
+<?php } ?>
 
-<label>Foto de la ficha médica</label><br>
-<input type="file" name="ficha_medica">
-
-<br><br>
-
-<label>Foto del carnet de salud</label><br>
-<input type="file" name="carnet_salud">
+<label>Imagen de la ficha médica</label><br>
+<input type="file" name="ficha_medica" accept="image/jpeg,image/png,image/webp" required>
 
 <br><br>
 
-<label>Fecha de vencimiento del carnet</label><br>
-<input type="date" name="vencimiento_carnet">
-
-<br><br>
-
-<button type="submit">Guardar Documentos</button>
+<button type="submit">Analizar y crear jugador</button>
 
 </form>
 

@@ -11,6 +11,6 @@ if (!$conn) {
     die("Error al conectar con la base de datos");
 }
 
-// Más adelante podríamos mejorar el manejo de errores.
+mysqli_set_charset($conn, 'utf8mb4');
 
 ?>

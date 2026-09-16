@@ -84,6 +84,8 @@ if($fila["club"]!=""){
 
 ?>
 
+</td>
+
 <td>
 
 <a href="cambiar_password_usuario.php?id=<?php echo $fila["id"]; ?>">
