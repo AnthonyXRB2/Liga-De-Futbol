@@ -1,6 +1,5 @@
 <?php
 session_start();
-include("restringir_club.php");
 include("conexion.php");
 
 $busqueda = "";
@@ -14,9 +13,6 @@ if (isset($_GET["categoria"])) {
     $categoria = $_GET["categoria"];
 }
 
-$categoriasDisponibles = array_map('strval', range(2013, 2019));
-$categoriasDisponibles[] = 'Femenina';
-
 $condiciones = [];
 
 if (isset($_SESSION["rol"]) && $_SESSION["rol"] == "club") {
@@ -29,11 +25,7 @@ if ($busqueda != "") {
 }
 
 if ($categoria != "") {
-    if ($categoria === 'Femenina' || $categoria === 'Femenino') {
-        $condiciones[] = "(jugadores.categoria = 'Femenina' OR jugadores.categoria = 'Femenino')";
-    } else {
-        $condiciones[] = "jugadores.categoria = '$categoria'";
-    }
+    $condiciones[] = "jugadores.categoria = '$categoria'";
 }
 
 $where = "";
@@ -103,11 +95,13 @@ $consulta = mysqli_query($conn,$sql);
 
 <option value="">Todas</option>
 
-<?php foreach (range(2013, 2019) as $anio): ?>
-    <option value="<?php echo $anio; ?>" <?php if($categoria == (string)$anio) echo "selected"; ?>><?php echo $anio; ?></option>
-<?php endforeach; ?>
+<option value="2013" <?php if($categoria=="2013") echo "selected"; ?>>2013</option>
 
-<option value="Femenina" <?php if($categoria=="Femenina" || $categoria=="Femenino") echo "selected"; ?>>Femenina</option>
+<option value="2014" <?php if($categoria=="2014") echo "selected"; ?>>2014</option>
+
+<option value="2015" <?php if($categoria=="2015") echo "selected"; ?>>2015</option>
+
+<option value="Femenino" <?php if($categoria=="Femenino") echo "selected"; ?>>Femenino</option>
 
 </select>
 
@@ -129,6 +123,10 @@ $consulta = mysqli_query($conn,$sql);
 <th>CI</th>
 <th>Categoría</th>
 <th>Club</th>
+<th>Altura</th>
+<th>Masa</th>
+<th>Fuerza Peso</th>
+<th>Velocidad</th>
 
 <?php if($_SESSION["rol"]=="admin"){ ?>
 
@@ -153,6 +151,14 @@ $consulta = mysqli_query($conn,$sql);
 <td><?php echo $fila["categoria"]; ?></td>
 
 <td><?php echo $fila["club"]; ?></td>
+
+<td><?php echo $fila["altura"]; ?> m</td>
+
+<td><?php echo $fila["masa"]; ?> kg</td>
+
+<td><?php echo $fila["fuerza_peso"]; ?> N</td>
+
+<td><?php echo $fila["velocidad"]; ?> m/s</td>
 
 <?php if($_SESSION["rol"]=="admin"){ ?>
 
