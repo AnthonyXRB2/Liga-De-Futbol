@@ -24,6 +24,26 @@ body{
     cursor:default;
 }
 
+.pagina-login{
+    min-height:100vh;
+    padding:24px 16px;
+    display:grid;
+    place-items:center;
+}
+
+.contenido-login{
+    width:min(500px, 100%);
+}
+
+.pagina-login h2{
+    margin:0 0 20px;
+}
+
+.pagina-login form{
+    width:100%;
+    margin:0;
+}
+
 .encabezado-principal{
     background:#0b0913;
     color:white;

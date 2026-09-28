@@ -9,7 +9,8 @@ session_start();
     <title>Login</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
-<body>
+<body class="pagina-login">
+<main class="contenido-login">
 
 <h2>Iniciar Sesión</h2>
 
@@ -28,6 +29,8 @@ session_start();
 <button type="submit">Ingresar</button>
 
 </form>
+
+</main>
 
 </body>
 </html>
