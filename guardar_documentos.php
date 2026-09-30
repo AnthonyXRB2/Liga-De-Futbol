@@ -54,6 +54,11 @@ if ($datos["nombre"] === "" || strlen($datos["ci"]) < 5) {
     exit();
 }
 
+if ($datos["fecha_nacimiento"] === "" || $datos["categoria"] === "") {
+    header("Location: subir_documentos.php?error=" . urlencode("No se pudo leer una fecha de nacimiento válida. Toma una foto más nítida y vuelve a intentarlo."));
+    exit();
+}
+
 $carpeta = __DIR__ . DIRECTORY_SEPARATOR . "uploads";
 if (!is_dir($carpeta) && !mkdir($carpeta, 0755, true)) {
     header("Location: subir_documentos.php?error=" . urlencode("No se pudo crear la carpeta de documentos."));
@@ -102,7 +107,7 @@ try {
     exit();
 }
 
-$mensaje = "Jugador creado: " . $datos["nombre"] . ". CI: " . $datos["ci"];
+$mensaje = "Jugador creado: " . $datos["nombre"] . ". CI: " . $datos["ci"] . ". Categoría: " . $datos["categoria"];
 header("Location: subir_documentos.php?ok=" . urlencode($mensaje));
 exit();
 

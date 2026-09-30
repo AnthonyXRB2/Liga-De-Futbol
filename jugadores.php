@@ -38,15 +38,16 @@ $sql = "
 SELECT
 jugadores.*,
 clubes.nombre AS club,
-documentos.id AS documento
+EXISTS (
+    SELECT 1
+    FROM documentos
+    WHERE documentos.jugador_id = jugadores.id
+) AS documento
 
 FROM jugadores
 
 LEFT JOIN clubes
 ON jugadores.club_id = clubes.id
-
-LEFT JOIN documentos
-ON jugadores.id = documentos.jugador_id
 
 $where
 
@@ -101,6 +102,8 @@ $consulta = mysqli_query($conn,$sql);
 
 <option value="2015" <?php if($categoria=="2015") echo "selected"; ?>>2015</option>
 
+<option value="2020" <?php if($categoria=="2020") echo "selected"; ?>>2020</option>
+
 <option value="Femenino" <?php if($categoria=="Femenino") echo "selected"; ?>>Femenino</option>
 
 </select>
@@ -131,6 +134,7 @@ $consulta = mysqli_query($conn,$sql);
 <?php if($_SESSION["rol"]=="admin"){ ?>
 
 <th>Documentación</th>
+<th>Acciones</th>
 
 <?php } ?>
 
@@ -178,6 +182,17 @@ echo "🔴";
 
 ?>
 
+</td>
+
+<?php } ?>
+
+<?php if($_SESSION["rol"]=="admin"){ ?>
+
+<td>
+<form action="eliminar_jugador.php" method="POST" onsubmit="return confirm('¿Eliminar este jugador y sus tarjetas y documentos asociados?');">
+<input type="hidden" name="id" value="<?php echo (int) $fila["id"]; ?>">
+<button type="submit">🗑 Eliminar</button>
+</form>
 </td>
 
 <?php } ?>

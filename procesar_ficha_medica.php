@@ -59,6 +59,25 @@ function ejecutar_ocr_ficha($rutaImagen)
     return $texto;
 }
 
+function calcular_datos_nacimiento($fechaNacimiento)
+{
+    $fecha = DateTime::createFromFormat('!Y-m-d', $fechaNacimiento);
+    $errores = DateTime::getLastErrors();
+    if (!$fecha || ($errores !== false && ($errores['warning_count'] > 0 || $errores['error_count'] > 0))) {
+        return false;
+    }
+
+    $hoy = new DateTime('today');
+    if ($fecha > $hoy) {
+        return false;
+    }
+
+    return [
+        'edad' => $hoy->diff($fecha)->y,
+        'categoria' => $fecha->format('Y')
+    ];
+}
+
 function extraer_datos_ficha($texto)
 {
     $texto = preg_replace('/[ \t]+/', ' ', str_replace(["\r\n", "\r"], "\n", $texto));
@@ -67,8 +86,9 @@ function extraer_datos_ficha($texto)
         'nombre' => '',
         'ci' => '',
         'edad' => 0,
+        'fecha_nacimiento' => '',
         'posicion' => 'Sin especificar',
-        'categoria' => 'Sin especificar'
+        'categoria' => ''
     ];
 
     $patrones = [
@@ -105,14 +125,23 @@ function extraer_datos_ficha($texto)
 
     if ($fechaNacimiento !== '') {
         $partes = preg_split('/[\/-]/', $fechaNacimiento);
-        $anio = (int) $partes[2];
-        if ($anio < 100) {
-            $anio += $anio < 30 ? 2000 : 1900;
-        }
-        $fecha = DateTime::createFromFormat('!d-m-Y', $partes[0] . '-' . $partes[1] . '-' . $anio);
-        if ($fecha instanceof DateTime) {
-            $hoy = new DateTime('today');
-            $datos['edad'] = $hoy->diff($fecha)->y;
+        if (count($partes) === 3) {
+            $dia = (int) $partes[0];
+            $mes = (int) $partes[1];
+            $anio = (int) $partes[2];
+            if ($anio < 100) {
+                $anio += $anio < 30 ? 2000 : 1900;
+            }
+
+            if (checkdate($mes, $dia, $anio)) {
+                $fechaNormalizada = sprintf('%04d-%02d-%02d', $anio, $mes, $dia);
+                $datosNacimiento = calcular_datos_nacimiento($fechaNormalizada);
+                if ($datosNacimiento !== false) {
+                    $datos['fecha_nacimiento'] = $fechaNormalizada;
+                    $datos['edad'] = $datosNacimiento['edad'];
+                    $datos['categoria'] = $datosNacimiento['categoria'];
+                }
+            }
         }
     }
 

@@ -32,8 +32,11 @@ include("conexion.php");
 <label>Nombre</label><br>
 <input type="text" name="nombre"><br><br>
 
-<label>Edad</label><br>
-<input type="number" name="edad"><br><br>
+<label>Fecha de nacimiento</label><br>
+<input type="date" name="fecha_nacimiento" id="fecha_nacimiento" required><br><br>
+
+<label>Categoría calculada</label><br>
+<input type="text" id="categoria_preview" readonly><br><br>
 
 <label>Posición</label><br>
 <select name="posicion">
@@ -71,10 +74,6 @@ while($club = mysqli_fetch_assoc($clubes)){
 <label>CI</label><br>
 <input type="text" name="ci"><br><br>
 
-<label>Categoría</label><br>
-<input type="text" name="categoria" placeholder="Ej: 2013, 2015, Femenino"><br><br>
-
-
 <label>Altura (metros)</label><br>
 <input type="number" step="0.01" name="altura" placeholder="Ej: 1.75"><br><br>
 
@@ -87,6 +86,15 @@ while($club = mysqli_fetch_assoc($clubes)){
 <button type="submit">Guardar</button>
 
 </form>
+
+<script>
+const fechaNacimiento = document.getElementById("fecha_nacimiento");
+const categoriaPreview = document.getElementById("categoria_preview");
+
+fechaNacimiento.addEventListener("input", () => {
+    categoriaPreview.value = fechaNacimiento.value ? fechaNacimiento.value.slice(0, 4) : "";
+});
+</script>
 
 </body>
 </html>
