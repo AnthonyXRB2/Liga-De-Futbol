@@ -33,7 +33,7 @@ if ($_SESSION["rol"] != "admin") {
 <form action="guardar_comunicado.php" method="POST">
 
     <label>Título</label><br>
-    <input type="text" name="titulo" required>
+    <input type="text" name="titulo" maxlength="100" required>
 
     <br><br>
 

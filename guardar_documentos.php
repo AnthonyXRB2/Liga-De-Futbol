@@ -1,26 +1,41 @@
 <?php
-
-include("conexion.php");
-include("procesar_ficha_medica.php");
-
 session_start();
+include("restringir_club.php");
 
-if(!isset($_SESSION["usuario"])){
+if (!isset($_SESSION["usuario"])) {
     header("Location: login.php");
     exit();
 }
+
+if (($_SESSION["rol"] ?? "") !== "club") {
+    http_response_code(403);
+    die("Solo los clubes pueden subir fichas médicas.");
+}
+
+require_once("conexion.php");
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     header("Location: subir_documentos.php");
     exit();
 }
 
-$rol = $_SESSION["rol"] ?? "";
-$clubId = $rol === "club" ? (int) ($_SESSION["club_id"] ?? 0) : (int) ($_POST["club_id"] ?? 0);
+$clubId = (int) ($_SESSION["club_id"] ?? 0);
+$jugadorId = (int) ($_POST["jugador_id"] ?? 0);
 
-if ($clubId <= 0) {
-    header("Location: subir_documentos.php?error=" . urlencode("Debes seleccionar un club válido."));
+if ($clubId <= 0 || $jugadorId <= 0) {
+    header("Location: subir_documentos.php?error=" . urlencode("Selecciona un jugador de tu club."));
     exit();
+}
+
+$jugadorStmt = mysqli_prepare($conn, "SELECT id FROM jugadores WHERE id = ? AND club_id = ?");
+mysqli_stmt_bind_param($jugadorStmt, "ii", $jugadorId, $clubId);
+mysqli_stmt_execute($jugadorStmt);
+mysqli_stmt_store_result($jugadorStmt);
+$jugadorExiste = mysqli_stmt_num_rows($jugadorStmt) === 1;
+mysqli_stmt_close($jugadorStmt);
+if (!$jugadorExiste) {
+    http_response_code(403);
+    die("No puedes actualizar la ficha de un jugador que no pertenece a tu club.");
 }
 
 if (!isset($_FILES["ficha_medica"]) || $_FILES["ficha_medica"]["error"] !== UPLOAD_ERR_OK) {
@@ -41,24 +56,6 @@ if (!isset($extensiones[$mime]) || @getimagesize($archivo["tmp_name"]) === false
     exit();
 }
 
-try {
-    $texto = ejecutar_ocr_ficha($archivo["tmp_name"]);
-    $datos = extraer_datos_ficha($texto);
-} catch (Throwable $error) {
-    header("Location: subir_documentos.php?error=" . urlencode($error->getMessage()));
-    exit();
-}
-
-if ($datos["nombre"] === "" || strlen($datos["ci"]) < 5) {
-    header("Location: subir_documentos.php?error=" . urlencode("No se pudieron leer el nombre y el CI. Toma una foto más nítida y vuelve a intentarlo."));
-    exit();
-}
-
-if ($datos["fecha_nacimiento"] === "" || $datos["categoria"] === "") {
-    header("Location: subir_documentos.php?error=" . urlencode("No se pudo leer una fecha de nacimiento válida. Toma una foto más nítida y vuelve a intentarlo."));
-    exit();
-}
-
 $carpeta = __DIR__ . DIRECTORY_SEPARATOR . "uploads";
 if (!is_dir($carpeta) && !mkdir($carpeta, 0755, true)) {
     header("Location: subir_documentos.php?error=" . urlencode("No se pudo crear la carpeta de documentos."));
@@ -74,41 +71,33 @@ if (!move_uploaded_file($archivo["tmp_name"], $rutaCompleta)) {
     exit();
 }
 
-$fecha_actual = date("Y-m-d H:i:s");
-$consulta = mysqli_prepare($conn, "SELECT id FROM jugadores WHERE club_id = ? AND ci = ? LIMIT 1");
-mysqli_stmt_bind_param($consulta, "is", $clubId, $datos["ci"]);
-mysqli_stmt_execute($consulta);
-mysqli_stmt_store_result($consulta);
-if (mysqli_stmt_num_rows($consulta) > 0) {
-    mysqli_stmt_close($consulta);
-    unlink($rutaCompleta);
-    header("Location: subir_documentos.php?error=" . urlencode("Ya existe un jugador con ese CI en el club."));
-    exit();
-}
-mysqli_stmt_close($consulta);
-
-mysqli_begin_transaction($conn);
 try {
-    $jugador = mysqli_prepare($conn, "INSERT INTO jugadores (nombre, edad, posicion, club_id, ci, categoria) VALUES (?, ?, ?, ?, ?, ?)");
-    mysqli_stmt_bind_param($jugador, "sisiss", $datos["nombre"], $datos["edad"], $datos["posicion"], $clubId, $datos["ci"], $datos["categoria"]);
-    mysqli_stmt_execute($jugador);
-    $jugadorId = mysqli_insert_id($conn);
-    mysqli_stmt_close($jugador);
+    $fechaActual = date("Y-m-d H:i:s");
+    $buscarDocumento = mysqli_prepare($conn, "SELECT id FROM documentos WHERE jugador_id = ? ORDER BY id DESC LIMIT 1");
+    mysqli_stmt_bind_param($buscarDocumento, "i", $jugadorId);
+    mysqli_stmt_execute($buscarDocumento);
+    $documentos = mysqli_stmt_get_result($buscarDocumento);
+    $documentoExistente = mysqli_fetch_assoc($documentos);
+    mysqli_stmt_close($buscarDocumento);
 
-    $documento = mysqli_prepare($conn, "INSERT INTO documentos (jugador_id, ficha_medica, fecha_subida_ficha, carnet_salud, vencimiento_carnet, fecha_subida_carnet) VALUES (?, ?, ?, '', '', '')");
-    mysqli_stmt_bind_param($documento, "iss", $jugadorId, $rutaRelativa, $fecha_actual);
-    mysqli_stmt_execute($documento);
-    mysqli_stmt_close($documento);
-    mysqli_commit($conn);
+    if ($documentoExistente) {
+        $actualizar = mysqli_prepare($conn, "UPDATE documentos SET ficha_medica = ?, fecha_subida_ficha = ? WHERE id = ?");
+        mysqli_stmt_bind_param($actualizar, "ssi", $rutaRelativa, $fechaActual, $documentoExistente["id"]);
+        mysqli_stmt_execute($actualizar);
+        mysqli_stmt_close($actualizar);
+    } else {
+        $insertar = mysqli_prepare($conn, "INSERT INTO documentos (jugador_id, ficha_medica, fecha_subida_ficha) VALUES (?, ?, ?)");
+        mysqli_stmt_bind_param($insertar, "iss", $jugadorId, $rutaRelativa, $fechaActual);
+        mysqli_stmt_execute($insertar);
+        mysqli_stmt_close($insertar);
+    }
 } catch (Throwable $error) {
-    mysqli_rollback($conn);
     unlink($rutaCompleta);
-    header("Location: subir_documentos.php?error=" . urlencode("No se pudo crear el jugador: " . $error->getMessage()));
+    header("Location: subir_documentos.php?error=" . urlencode("No se pudo guardar la ficha médica. Inténtalo nuevamente."));
     exit();
 }
 
-$mensaje = "Jugador creado: " . $datos["nombre"] . ". CI: " . $datos["ci"] . ". Categoría: " . $datos["categoria"];
-header("Location: subir_documentos.php?ok=" . urlencode($mensaje));
+header("Location: subir_documentos.php?ok=" . urlencode("La ficha médica se guardó correctamente."));
 exit();
 
 ?>

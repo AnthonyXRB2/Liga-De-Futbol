@@ -7,7 +7,7 @@ if (!isset($_SESSION['usuario'])) {
     exit();
 }
 
-include('conexion.php');
+require_once('conexion.php');
 
 $rol = $_SESSION['rol'] ?? '';
 $consultaComunicados = mysqli_query(

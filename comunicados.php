@@ -7,7 +7,7 @@ if (!isset($_SESSION['usuario'])) {
     exit();
 }
 
-include('conexion.php');
+require_once('conexion.php');
 
 $consulta = mysqli_query($conn, 'SELECT id, titulo, mensaje FROM comunicados ORDER BY id DESC');
 $esAdmin = ($_SESSION['rol'] ?? '') === 'admin';
@@ -29,6 +29,9 @@ $esAdmin = ($_SESSION['rol'] ?? '') === 'admin';
     <?php if (isset($_GET['creado'])) { ?>
         <p class="mensaje-exito">El comunicado se public&oacute; correctamente.</p>
     <?php } ?>
+    <?php if (isset($_GET['editado'])) { ?>
+        <p class="mensaje-exito">El comunicado se actualiz&oacute; correctamente.</p>
+    <?php } ?>
 
     <?php if ($esAdmin) { ?>
         <p class="acciones-comunicados"><a href="agregar_comunicado.php"><button type="button">Publicar comunicado</button></a></p>
@@ -43,6 +46,9 @@ $esAdmin = ($_SESSION['rol'] ?? '') === 'admin';
 
                     <?php if ($esAdmin) { ?>
                         <p class="acciones-comunicados">
+                            <a href="editar_comunicado.php?id=<?php echo (int)$comunicado['id']; ?>">
+                                <button type="button">Editar comunicado</button>
+                            </a>
                             <a href="eliminar_comunicado.php?id=<?php echo (int)$comunicado['id']; ?>" onclick="return confirm('¿Eliminar este comunicado?');">
                                 <button type="button">Eliminar comunicado</button>
                             </a>

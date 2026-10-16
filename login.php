@@ -14,6 +14,11 @@ session_start();
 
 <h2>Iniciar Sesión</h2>
 
+<?php if (isset($_SESSION['error_login'])) { ?>
+    <p class="mensaje-error"><?php echo htmlspecialchars($_SESSION['error_login'], ENT_QUOTES, 'UTF-8'); ?></p>
+    <?php unset($_SESSION['error_login']); ?>
+<?php } ?>
+
 <form action="validar_login.php" method="POST">
 
 <label>Usuario</label><br>

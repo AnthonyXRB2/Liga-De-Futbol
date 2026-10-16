@@ -12,19 +12,26 @@ if (($_SESSION['rol'] ?? '') !== 'admin') {
 
 include('conexion.php');
 
-$id = $_GET['id'] ?? null;
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
-if ($id === null || !is_numeric($id)) {
+if (!$id || $id < 1) {
     header('Location: clubes.php');
     exit();
 }
 
-$resultado = mysqli_query($conn, "SELECT activo FROM clubes WHERE id = $id LIMIT 1");
+$consulta = mysqli_prepare($conn, 'SELECT activo FROM clubes WHERE id = ? LIMIT 1');
+mysqli_stmt_bind_param($consulta, 'i', $id);
+mysqli_stmt_execute($consulta);
+$resultado = mysqli_stmt_get_result($consulta);
+$club = mysqli_fetch_assoc($resultado);
+mysqli_stmt_close($consulta);
 
-if ($resultado && mysqli_num_rows($resultado) > 0) {
-    $club = mysqli_fetch_assoc($resultado);
-    $nuevoEstado = ($club['activo'] == 1) ? 0 : 1;
-    mysqli_query($conn, "UPDATE clubes SET activo = $nuevoEstado WHERE id = $id");
+if ($club) {
+    $nuevoEstado = (int) $club['activo'] === 1 ? 0 : 1;
+    $actualizar = mysqli_prepare($conn, 'UPDATE clubes SET activo = ? WHERE id = ?');
+    mysqli_stmt_bind_param($actualizar, 'ii', $nuevoEstado, $id);
+    mysqli_stmt_execute($actualizar);
+    mysqli_stmt_close($actualizar);
 }
 
 header('Location: clubes.php');

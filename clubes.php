@@ -8,7 +8,7 @@ if (!isset($_SESSION['usuario'])) {
 }
 
 $esAdmin = ($_SESSION['rol'] ?? '') === 'admin';
-include("conexion.php");
+require_once("conexion.php");
 ?>
 
 <!DOCTYPE html>

@@ -30,16 +30,17 @@ include("conexion.php");
 <form action="guardar_jugador.php" method="POST">
 
 <label>Nombre</label><br>
-<input type="text" name="nombre"><br><br>
+<input type="text" name="nombre" required><br><br>
 
 <label>Fecha de nacimiento</label><br>
-<input type="date" name="fecha_nacimiento" id="fecha_nacimiento" required><br><br>
+<input type="date" name="fecha_nacimiento" id="fecha_nacimiento" min="2013-01-01" max="2019-12-31" aria-describedby="fecha_error" required>
+<span id="fecha_error" class="ayuda-fecha" role="alert" hidden></span><br><br>
 
 <label>Categoría calculada</label><br>
 <input type="text" id="categoria_preview" readonly><br><br>
 
 <label>Posición</label><br>
-<select name="posicion">
+<select name="posicion" required>
     <option>Arquero</option>
     <option>Defensa</option>
     <option>Mediocampista</option>
@@ -50,11 +51,11 @@ include("conexion.php");
 
 <label>Club</label><br>
 
-<select name="club_id">
+<select name="club_id" required>
 
 <?php
 
-$clubes = mysqli_query($conn, "SELECT * FROM clubes");
+$clubes = mysqli_query($conn, "SELECT id, nombre FROM clubes WHERE activo = 1 ORDER BY nombre");
 
 while($club = mysqli_fetch_assoc($clubes)){
 ?>
@@ -72,7 +73,7 @@ while($club = mysqli_fetch_assoc($clubes)){
 <br><br>
 
 <label>CI</label><br>
-<input type="text" name="ci"><br><br>
+<input type="text" name="ci" required><br><br>
 
 <label>Altura (metros)</label><br>
 <input type="number" step="0.01" name="altura" placeholder="Ej: 1.75"><br><br>
@@ -91,9 +92,19 @@ while($club = mysqli_fetch_assoc($clubes)){
 const fechaNacimiento = document.getElementById("fecha_nacimiento");
 const categoriaPreview = document.getElementById("categoria_preview");
 
-fechaNacimiento.addEventListener("input", () => {
-    categoriaPreview.value = fechaNacimiento.value ? fechaNacimiento.value.slice(0, 4) : "";
-});
+function validarFechaNacimiento() {
+    const anio = Number(fechaNacimiento.value.slice(0, 4));
+    const fechaInvalida = fechaNacimiento.value && (anio < 2013 || anio > 2019);
+    const mensaje = "El año permitido para la categoría es de 2013 a 2019.";
+
+    fechaNacimiento.setCustomValidity(fechaInvalida ? mensaje : "");
+    document.getElementById("fecha_error").textContent = fechaInvalida ? mensaje : "";
+    document.getElementById("fecha_error").hidden = !fechaInvalida;
+    categoriaPreview.value = fechaNacimiento.value && !fechaInvalida ? String(anio) : "";
+}
+
+fechaNacimiento.addEventListener("input", validarFechaNacimiento);
+fechaNacimiento.addEventListener("change", validarFechaNacimiento);
 </script>
 
 </body>

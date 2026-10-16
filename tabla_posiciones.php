@@ -1,7 +1,7 @@
 <?php
 session_start();
 include('restringir_club.php');
-include('conexion.php');
+require_once('conexion.php');
 ?>
 <!DOCTYPE html>
 <html>

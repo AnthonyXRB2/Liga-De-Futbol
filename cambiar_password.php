@@ -6,7 +6,12 @@ if(!isset($_SESSION["usuario"])){
     exit();
 }
 
-include("conexion.php");
+if (($_SESSION["rol"] ?? "") !== "admin") {
+    http_response_code(403);
+    die("Solo el administrador puede cambiar su contraseña.");
+}
+
+require_once("conexion.php");
 
 if (isset($_POST["guardar"])) {
 

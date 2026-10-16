@@ -7,7 +7,7 @@ if (!isset($_SESSION["usuario"])) {
     exit();
 }
 
-include("conexion.php");
+require_once("conexion.php");
 
 $where="";
 

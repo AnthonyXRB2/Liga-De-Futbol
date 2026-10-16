@@ -28,7 +28,6 @@ $rolVisible = htmlspecialchars($rol, ENT_QUOTES, 'UTF-8');
             <a href="ver_documentos.php">Documentos del club</a>
             <a href="comunicados.php">Comunicados</a>
             <a href="subir_documentos.php">Subir ficha médica</a>
-            <a href="cambiar_password.php">Contraseña</a>
         <?php } else { ?>
             <a href="index.php">Inicio</a>
 
@@ -55,8 +54,6 @@ $rolVisible = htmlspecialchars($rol, ENT_QUOTES, 'UTF-8');
             <summary>Publicaciones</summary>
             <div class="opciones-menu">
                 <a href="comunicados.php">Comunicados</a>
-                <a href="subir_documentos.php">Documentos</a>
-                <a href="ver_documentos.php">Ver Docs</a>
             </div>
             </details>
         <?php } ?>
