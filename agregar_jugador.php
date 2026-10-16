@@ -27,7 +27,7 @@ include("conexion.php");
 
 <h2>Agregar Jugador</h2>
 
-<form action="guardar_jugador.php" method="POST">
+<form id="form-jugador" action="guardar_jugador.php" method="POST">
 
 <label>Nombre</label><br>
 <input type="text" name="nombre" required><br><br>
@@ -72,8 +72,9 @@ while($club = mysqli_fetch_assoc($clubes)){
 
 <br><br>
 
-<label>CI</label><br>
-<input type="text" name="ci" required><br><br>
+<label for="ci">Cédula</label>
+<input id="ci" type="text" name="ci" inputmode="numeric" autocomplete="off" maxlength="8" pattern="[0-9]{1,8}" aria-describedby="ci_error" required>
+<span id="ci_error" class="ayuda-fecha" role="alert" hidden></span>
 
 <label>Altura (metros)</label><br>
 <input type="number" step="0.01" name="altura" placeholder="Ej: 1.75"><br><br>
@@ -105,6 +106,67 @@ function validarFechaNacimiento() {
 
 fechaNacimiento.addEventListener("input", validarFechaNacimiento);
 fechaNacimiento.addEventListener("change", validarFechaNacimiento);
+
+const formularioJugador = document.getElementById("form-jugador");
+const cedula = document.getElementById("ci");
+const errorCedula = document.getElementById("ci_error");
+
+function mostrarErrorCedula(mensaje) {
+    cedula.setCustomValidity(mensaje);
+    errorCedula.textContent = mensaje;
+    errorCedula.hidden = mensaje === "";
+}
+
+async function validarCedulaUnica() {
+    if (!/^[0-9]{1,8}$/.test(cedula.value)) {
+        mostrarErrorCedula("La cédula solo puede tener números y hasta 8 dígitos.");
+        return false;
+    }
+
+    mostrarErrorCedula("");
+    try {
+        const respuesta = await fetch("verificar_ci.php?ci=" + encodeURIComponent(cedula.value), {
+            headers: { "Accept": "application/json" }
+        });
+        if (!respuesta.ok) {
+            throw new Error("No se pudo verificar la cédula.");
+        }
+        const resultado = await respuesta.json();
+        if (!resultado.disponible) {
+            mostrarErrorCedula("Esta cédula ya está registrada. Cada jugador debe tener una cédula única.");
+            return false;
+        }
+        mostrarErrorCedula("");
+        return true;
+    } catch (error) {
+        mostrarErrorCedula("No se pudo comprobar la cédula. Intenta nuevamente.");
+        return false;
+    }
+}
+
+cedula.addEventListener("input", () => {
+    cedula.value = cedula.value.replace(/[^0-9]/g, "").slice(0, 8);
+    mostrarErrorCedula("");
+});
+cedula.addEventListener("blur", validarCedulaUnica);
+
+formularioJugador.addEventListener("submit", async (evento) => {
+    if (formularioJugador.dataset.ciVerificada === cedula.value) {
+        delete formularioJugador.dataset.ciVerificada;
+        return;
+    }
+
+    evento.preventDefault();
+    if (!formularioJugador.reportValidity()) {
+        return;
+    }
+    if (await validarCedulaUnica()) {
+        formularioJugador.dataset.ciVerificada = cedula.value;
+        formularioJugador.requestSubmit();
+    } else {
+        cedula.reportValidity();
+    }
+});
 </script>
 
 </body>

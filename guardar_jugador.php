@@ -38,6 +38,20 @@ if ($nombre === "" || $posicion === "" || $ci === "" || $club_id <= 0) {
     die("Completa todos los datos obligatorios del jugador.");
 }
 
+if (!preg_match('/^[0-9]{1,8}$/D', $ci)) {
+    die("La cédula solo puede contener números y tener un máximo de 8 dígitos.");
+}
+
+$buscarCedula = mysqli_prepare($conn, "SELECT id FROM jugadores WHERE ci = ? LIMIT 1");
+mysqli_stmt_bind_param($buscarCedula, "s", $ci);
+mysqli_stmt_execute($buscarCedula);
+mysqli_stmt_store_result($buscarCedula);
+$cedulaDuplicada = mysqli_stmt_num_rows($buscarCedula) > 0;
+mysqli_stmt_close($buscarCedula);
+if ($cedulaDuplicada) {
+    die("Esta cédula ya está registrada.");
+}
+
 $club = mysqli_prepare($conn, "SELECT id FROM clubes WHERE id = ? AND activo = 1");
 mysqli_stmt_bind_param($club, "i", $club_id);
 mysqli_stmt_execute($club);

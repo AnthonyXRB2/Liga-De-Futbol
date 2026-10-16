@@ -12,15 +12,32 @@
 * { box-sizing: border-box; }
 
 body {
+    position: relative;
+    isolation: isolate;
     min-height: 100vh;
     margin: 0;
     padding: 28px 28px 32px 284px;
     color: var(--tinta);
     background:
-        radial-gradient(ellipse at 100% 0, rgba(242, 201, 76, .15), transparent 30%),
-        repeating-linear-gradient(0deg, transparent 0 48px, rgba(23, 131, 75, .025) 49px 50px),
+        radial-gradient(ellipse at 78% 0%, rgba(242, 201, 76, .19), transparent 34%),
+        linear-gradient(110deg, rgba(255, 255, 255, .86), rgba(242, 250, 244, .91)),
         var(--fondo);
     font: 16px/1.5 "Segoe UI", Arial, sans-serif;
+}
+
+body::before {
+    position: fixed;
+    z-index: -1;
+    inset: 0 0 0 260px;
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, .72), transparent 35%),
+        linear-gradient(90deg, transparent 49.8%, rgba(255, 255, 255, .54) 50%, transparent 50.2%),
+        radial-gradient(circle at 50% 50%, transparent 0 11%, rgba(255, 255, 255, .48) 11.1% 11.3%, transparent 11.4%),
+        repeating-linear-gradient(0deg, rgba(23, 131, 75, .035) 0 52px, rgba(255, 255, 255, .08) 52px 104px);
+    content: "";
+    opacity: .7;
+    pointer-events: none;
+    animation: cancha-resplandor 14s ease-in-out infinite alternate;
 }
 
 a { color: var(--verde-oscuro); font-weight: 650; }
@@ -235,6 +252,11 @@ tr:last-child td { border-bottom: 0; }
 }
 .card:hover { transform: translateY(-4px); }
 .card p { color: var(--verde-oscuro); font-size: 30px; font-weight: 800; }
+.pagina-contenido, .seccion-comunicados, .bienvenida, .contenido-login { animation: entrada-seccion .45s cubic-bezier(.2, .75, .25, 1) both; }
+.comunicado, .card { animation: entrada-tarjeta .45s ease-out both; }
+.lista-comunicados .comunicado:nth-child(2), .dashboard .card:nth-child(2) { animation-delay: 60ms; }
+.lista-comunicados .comunicado:nth-child(3), .dashboard .card:nth-child(3) { animation-delay: 120ms; }
+.lista-comunicados .comunicado:nth-child(4), .dashboard .card:nth-child(4) { animation-delay: 180ms; }
 
 .pagina-login {
     display: grid;
@@ -248,8 +270,27 @@ tr:last-child td { border-bottom: 0; }
 .contenido-login form { margin: 0; }
 
 :focus-visible { outline: 3px solid var(--balon); outline-offset: 2px; }
+@keyframes entrada-seccion {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes entrada-tarjeta {
+    from { opacity: 0; translate: 0 8px; }
+    to { opacity: 1; translate: 0 0; }
+}
+@keyframes cancha-resplandor {
+    from { background-position: 0 0, 0 0, 0 0, 0 0; }
+    to { background-position: 0 12px, 0 0, 0 0, 0 104px; }
+}
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: salida-seccion .18s ease-in both; }
+::view-transition-new(root) { animation: entrada-seccion .35s ease-out both; }
+@keyframes salida-seccion {
+    to { opacity: 0; transform: translateY(-5px); }
+}
 @media (max-width: 760px) {
     body { padding: 72px 18px 24px; }
+    body::before { left: 0; }
     .sidebar { width: min(82vw, 300px); transform: translateX(-105%); transition: transform .25s; }
     .sidebar-abierta .sidebar { transform: translateX(0); }
     .boton-menu {
@@ -262,6 +303,10 @@ tr:last-child td { border-bottom: 0; }
         padding: 0;
         background: var(--verde-oscuro);
         font-size: 23px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+        ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
     }
     .sidebar-abierta .boton-menu { left: calc(min(82vw, 300px) + 14px); }
     .fondo-sidebar { position: fixed; z-index: 15; inset: 0; display: block; visibility: hidden; background: rgba(7, 32, 20, .55); opacity: 0; }
