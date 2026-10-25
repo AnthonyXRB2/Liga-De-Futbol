@@ -40,6 +40,8 @@ require_once("conexion.php");
 
 <tr>
     <th>Nombre</th>
+    <th>Director técnico</th>
+    <th>Departamento</th>
     <th>Ciudad</th>
     <th>Estado</th>
 
@@ -58,9 +60,13 @@ while($club = mysqli_fetch_assoc($consulta)){
 
 <tr>
 
-    <td><?php echo $club["nombre"]; ?></td>
+    <td><?php echo htmlspecialchars($club["nombre"], ENT_QUOTES, "UTF-8"); ?></td>
 
-    <td><?php echo $club["ciudad"]; ?></td>
+    <td><?php echo htmlspecialchars($club["director_tecnico"] ?? "", ENT_QUOTES, "UTF-8"); ?></td>
+
+    <td><?php echo htmlspecialchars($club["departamento"] ?? "", ENT_QUOTES, "UTF-8"); ?></td>
+
+    <td><?php echo htmlspecialchars($club["ciudad"], ENT_QUOTES, "UTF-8"); ?></td>
 
     <td>
         <?php

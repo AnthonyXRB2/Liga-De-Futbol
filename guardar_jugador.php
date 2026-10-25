@@ -29,17 +29,52 @@ $posicion = trim($_POST["posicion"] ?? "");
 $club_id = (int) ($_POST["club_id"] ?? 0);
 $ci = trim($_POST["ci"] ?? "");
 $categoria = $datosNacimiento["categoria"];
-$altura = (float) ($_POST["altura"] ?? 0);
-$masa = (float) ($_POST["masa"] ?? 0);
+$alturaIngresada = trim($_POST["altura"] ?? "");
+$masaIngresada = trim($_POST["masa"] ?? "");
+$velocidadIngresada = trim($_POST["velocidad"] ?? "");
+$altura = (float) str_replace(",", ".", $alturaIngresada);
+$masa = (float) str_replace(",", ".", $masaIngresada);
 $fuerza_peso = $masa * 9.8;
-$velocidad = (float) ($_POST["velocidad"] ?? 0);
+$velocidad = (float) str_replace(",", ".", $velocidadIngresada);
 
 if ($nombre === "" || $posicion === "" || $ci === "" || $club_id <= 0) {
     die("Completa todos los datos obligatorios del jugador.");
 }
 
-if (!preg_match('/^[0-9]{1,8}$/D', $ci)) {
-    die("La cédula solo puede contener números y tener un máximo de 8 dígitos.");
+if (!preg_match('/^[0-9]{8}$/D', $ci)) {
+    die("La cédula debe contener exactamente 8 dígitos.");
+}
+
+$palabrasNombre = explode(" ", $nombre);
+$nombreInvalido = !preg_match('/^\p{Lu}[\p{L}\p{M} ]*$/uD', $nombre)
+    || count($palabrasNombre) > 4;
+foreach ($palabrasNombre as $palabraNombre) {
+    $cantidadLetras = preg_match_all('/\p{L}/u', $palabraNombre);
+    if (!preg_match('/^\p{Lu}[\p{Ll}\p{M}]*$/uD', $palabraNombre) || $cantidadLetras < 3 || $cantidadLetras > 10) {
+        $nombreInvalido = true;
+        break;
+    }
+}
+if ($nombreInvalido) {
+    die("Cada palabra debe tener entre 3 y 10 letras. El nombre debe comenzar con mayúscula y usar de 1 a 3 espacios entre palabras.");
+}
+
+$limitesFisicos = [
+    "altura" => [$alturaIngresada, '/^(?:1,[0-9]{1,2}|2,(?:0[0-9]?|10?))$/D', 1, 2.1, "La altura debe estar entre 1,00 y 2,10 metros."],
+    "masa" => [$masaIngresada, '/^(?:1[5-9]|[2-6][0-9]|70),[0-9]$/D', 15, 70.9, "El peso debe estar entre 15,0 y 70,9 kg."],
+    "velocidad" => [$velocidadIngresada, '/^[1-9],[0-9]$/D', 1, 9.9, "La velocidad debe estar entre 1,0 y 9,9 m/s."],
+];
+foreach ($limitesFisicos as [$valorIngresado, $formato, $minimo, $maximo, $mensajeError]) {
+    if ($valorIngresado === "") {
+        continue;
+    }
+    if (!preg_match($formato, $valorIngresado)) {
+        die("Los datos físicos no tienen el formato permitido. Usa la coma decimal y respeta los dígitos indicados.");
+    }
+    $valorNumerico = (float) str_replace(",", ".", $valorIngresado);
+    if ($valorNumerico < $minimo || $valorNumerico > $maximo) {
+        die($mensajeError);
+    }
 }
 
 $buscarCedula = mysqli_prepare($conn, "SELECT id FROM jugadores WHERE ci = ? LIMIT 1");

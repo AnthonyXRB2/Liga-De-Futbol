@@ -31,6 +31,8 @@ CREATE TABLE `clubes` (
   `id` int(11) NOT NULL,
   `nombre` varchar(100) DEFAULT NULL,
   `ciudad` varchar(100) DEFAULT NULL,
+  `director_tecnico` varchar(43) DEFAULT NULL,
+  `departamento` varchar(30) DEFAULT NULL,
   `activo` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
