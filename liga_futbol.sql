@@ -31,6 +31,7 @@ CREATE TABLE `clubes` (
   `id` int(11) NOT NULL,
   `nombre` varchar(100) DEFAULT NULL,
   `ciudad` varchar(100) DEFAULT NULL,
+  `fecha_fundacion` date DEFAULT NULL,
   `director_tecnico` varchar(43) DEFAULT NULL,
   `departamento` varchar(30) DEFAULT NULL,
   `activo` tinyint(1) NOT NULL DEFAULT 1
@@ -153,6 +154,7 @@ CREATE TABLE `partidos` (
   `local_id` int(11) DEFAULT NULL,
   `visitante_id` int(11) DEFAULT NULL,
   `fecha` date DEFAULT NULL,
+  `hora` time DEFAULT NULL,
   `goles_local` int(11) DEFAULT NULL,
   `goles_visitante` int(11) DEFAULT NULL,
   `estado` varchar(30) DEFAULT 'Programado',
@@ -201,7 +203,7 @@ INSERT INTO `tarjetas` (`id`, `jugador_id`, `partido_id`, `tipo`, `motivo`, `fec
 CREATE TABLE `usuarios` (
   `id` int(11) NOT NULL,
   `usuario` varchar(50) NOT NULL,
-  `password` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
   `rol` varchar(20) NOT NULL,
   `club_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -211,8 +213,8 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `usuario`, `password`, `rol`, `club_id`) VALUES
-(1, 'Administrador', 'admin@54743537', 'admin', NULL),
-(5, 'Peñarol', '1234', 'club', 4);
+(1, 'Administrador', 'hash:24327924313024664a5a4c6d59463641312f4c356974525a385055724f6277744d35446c795a5a62495250755074522e634566573634585a4859394b', 'admin', NULL),
+(5, 'Peñarol', 'hash:2432792431302453364c6e46465a5966495a4147716e66436b6771712e457971774e5734516b79724c4533576562626e627031494937684e56526653', 'club', 4);
 
 --
 -- Índices para tablas volcadas

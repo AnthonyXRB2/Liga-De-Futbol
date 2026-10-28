@@ -72,7 +72,17 @@ while($club2 = mysqli_fetch_assoc($clubes2)){
 <br><br>
 
 <label>Fecha</label><br>
-<input type="date" name="fecha" required>
+<input type="date" id="fecha" name="fecha" min="<?php echo date("Y-m-d"); ?>"
+       aria-describedby="fecha-error" required>
+<small id="fecha-error" class="ayuda-fecha" hidden></small>
+
+<br><br>
+
+<label for="hora">Hora del partido (AM/PM)</label><br>
+<input type="text" id="hora" name="hora" placeholder="8:30Am" maxlength="7"
+       autocomplete="off" autocapitalize="characters" aria-describedby="hora-error"
+       required title="Escribe una hora entre 1:00 y 12:59, seguida de A o P.">
+<small id="hora-error" class="ayuda-fecha" hidden></small>
 
 <br><br>
 
@@ -88,35 +98,133 @@ while($club2 = mysqli_fetch_assoc($clubes2)){
 
 <br><br>
 
-<label>Estado</label><br>
-<select name="estado">
-    <option>Programado</option>
-    <option>Sin fecha</option>
-    <option>Pendiente</option>
-    <option>Suspendido</option>
-    <option>Jugado</option>
-</select>
-
-<br><br>
-
-<label>Motivo de suspensión (si corresponde)</label><br>
-<input type="text" name="motivo_suspension">
-
-<br><br>
-
-<label>Goles del Local</label><br>
-<input type="number" name="goles_local" value="0">
-
-<br><br>
-
-<label>Goles del Visitante</label><br>
-<input type="number" name="goles_visitante" value="0">
-
-<br><br>
-
 <button type="submit">Guardar Partido</button>
 
 </form>
+
+<script>
+const fechaPartido = document.getElementById("fecha");
+const errorFecha = document.getElementById("fecha-error");
+const horaPartido = document.getElementById("hora");
+const errorHora = document.getElementById("hora-error");
+const formularioPartido = horaPartido.form;
+const mensajeFecha = "No se puede registrar un partido con una fecha anterior al día actual.";
+const formatoHoraValido = /^(?:[1-9]|1[0-2]):[0-5][0-9](?:Am|Pm)$/;
+
+function validarFechaPartido(mostrarMensaje = false) {
+    const fechaInvalida = fechaPartido.value && fechaPartido.value < fechaPartido.min;
+    const fechaIncompleta = mostrarMensaje && !fechaPartido.value;
+    const mensaje = fechaInvalida
+        ? mensajeFecha
+        : fechaIncompleta ? "Debes ingresar la fecha del partido." : "";
+
+    fechaPartido.setCustomValidity(mensaje);
+    errorFecha.textContent = mensaje;
+    errorFecha.hidden = !mensaje;
+    if (mensaje && mostrarMensaje) {
+        fechaPartido.reportValidity();
+    }
+    return !mensaje;
+}
+
+function formatearHora(valor) {
+    const entrada = valor.replace(/m/gi, "").replace(/[^0-9:ap]/gi, "").toUpperCase();
+    const separador = entrada.indexOf(":");
+    let hora;
+    let minutosEntrada;
+    let sufijoEntrada;
+
+    if (separador >= 0) {
+        hora = entrada.slice(0, separador).replace(/\D/g, "").slice(0, 2);
+        minutosEntrada = entrada.slice(separador + 1).replace(/\D/g, "").slice(0, 2);
+        sufijoEntrada = entrada.slice(separador + 1).match(/[AP]/);
+    } else {
+        const digitos = entrada.replace(/\D/g, "").slice(0, 4);
+        if (!digitos) {
+            return "";
+        }
+        if (digitos[0] === "1") {
+            if (digitos.length === 1) {
+                return "1";
+            }
+            if (!/[0-2]/.test(digitos[1])) {
+                return "1:";
+            }
+            hora = digitos.slice(0, 2);
+            minutosEntrada = digitos.slice(2);
+        } else {
+            hora = digitos[0];
+            minutosEntrada = digitos.slice(1);
+        }
+        sufijoEntrada = entrada.match(/[AP]/);
+    }
+
+    if (!hora || hora[0] === "0" || (hora.length === 2 && !/^1[0-2]$/.test(hora))) {
+        return "";
+    }
+
+    let minutos = "";
+    if (minutosEntrada) {
+        if (minutosEntrada[0] > "5") {
+            minutosEntrada = minutosEntrada.slice(1);
+        }
+        minutos = minutosEntrada.slice(0, 2);
+    }
+    if (minutos.length < 2) {
+        sufijoEntrada = null;
+    }
+
+    return hora + ":" + minutos + (sufijoEntrada ? sufijoEntrada[0] : "");
+}
+
+fechaPartido.addEventListener("input", () => validarFechaPartido());
+fechaPartido.addEventListener("change", () => validarFechaPartido(true));
+fechaPartido.addEventListener("blur", () => validarFechaPartido(true));
+
+horaPartido.addEventListener("input", () => {
+    const valorFormateado = formatearHora(horaPartido.value);
+    horaPartido.value = valorFormateado;
+    horaPartido.setSelectionRange(valorFormateado.length, valorFormateado.length);
+    errorHora.hidden = true;
+    horaPartido.setCustomValidity("");
+});
+
+function finalizarHora() {
+    const coincidencia = horaPartido.value.match(/^((?:[1-9]|1[0-2]):[0-5][0-9])([AP])$/);
+    if (coincidencia) {
+        horaPartido.value = coincidencia[1] + coincidencia[2] + "m";
+    }
+    const horaCorrecta = formatoHoraValido.test(horaPartido.value);
+    const mensaje = horaPartido.value && !horaCorrecta
+        ? "Completa la hora con minutos y A o P, por ejemplo 8:40Am."
+        : "";
+    horaPartido.setCustomValidity(mensaje);
+    errorHora.textContent = mensaje;
+    errorHora.hidden = !mensaje;
+}
+
+horaPartido.addEventListener("blur", finalizarHora);
+
+formularioPartido.addEventListener("submit", (evento) => {
+    const fechaCorrecta = validarFechaPartido();
+    finalizarHora();
+    const horaCorrecta = formatoHoraValido.test(horaPartido.value);
+    const mensaje = "Ingresa una hora válida, por ejemplo 8:40Am, 10:40Am o 12:40Pm.";
+
+    horaPartido.setCustomValidity(horaCorrecta ? "" : mensaje);
+    errorHora.textContent = horaCorrecta ? "" : mensaje;
+    errorHora.hidden = horaCorrecta;
+
+    if (!fechaCorrecta || !horaCorrecta) {
+        evento.preventDefault();
+        if (!fechaCorrecta) {
+            fechaPartido.reportValidity();
+        } else {
+            horaPartido.reportValidity();
+        }
+    }
+});
+</script>
 
 </body>
 </html>

@@ -15,19 +15,34 @@ include("conexion.php");
 $local = filter_input(INPUT_POST, "local", FILTER_VALIDATE_INT);
 $visitante = filter_input(INPUT_POST, "visitante", FILTER_VALIDATE_INT);
 $fecha = $_POST["fecha"] ?? "";
-$estado = $_POST["estado"] ?? "";
-$motivo_suspension = trim($_POST["motivo_suspension"] ?? "");
-$goles_local = filter_input(INPUT_POST, "goles_local", FILTER_VALIDATE_INT);
-$goles_visitante = filter_input(INPUT_POST, "goles_visitante", FILTER_VALIDATE_INT);
+$horaEntrada = $_POST["hora"] ?? "";
 $categoria = $_POST["categoria"] ?? "";
 $categoriasPermitidas = ["Estándar", "Copa Plata", "Copa Oro"];
-$estadosPermitidos = ["Programado", "Sin fecha", "Pendiente", "Suspendido", "Jugado"];
 
-if ($local === false || $visitante === false || $local === null || $visitante === null || $fecha === "" ||
-    !in_array($estado, $estadosPermitidos, true) || !in_array($categoria, $categoriasPermitidas, true) ||
-    $goles_local === false || $goles_visitante === false || $goles_local < 0 || $goles_visitante < 0) {
+$fechaValida = is_string($fecha) &&
+    preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha) &&
+    checkdate((int) substr($fecha, 5, 2), (int) substr($fecha, 8, 2), (int) substr($fecha, 0, 4)) &&
+    $fecha >= date("Y-m-d");
+$horaValida = is_string($horaEntrada) &&
+    preg_match('/^([1-9]|1[0-2]):([0-5][0-9])(A|P)m$/', trim($horaEntrada), $partesHora);
+
+if (!$fechaValida) {
+    http_response_code(400);
+    die("No se puede registrar un partido con una fecha anterior al día actual o una fecha inválida.");
+}
+
+if ($local === false || $visitante === false || $local === null || $visitante === null ||
+    !$horaValida || !in_array($categoria, $categoriasPermitidas, true)) {
+    http_response_code(400);
     die("Revisa los datos del partido e intenta nuevamente.");
 }
+
+[$coincidencia, $hora, $minutos, $periodo] = $partesHora;
+$hora = (int) $hora % 12;
+if ($periodo === "P") {
+    $hora += 12;
+}
+$horaSql = sprintf("%02d:%s:00", $hora, $minutos);
 
 // Evitar que un club juegue contra sí mismo
 if ($local === $visitante) {
@@ -35,13 +50,13 @@ if ($local === $visitante) {
 }
 
 $sql = "INSERT INTO partidos
-    (local_id, visitante_id, fecha, estado, motivo_suspension, goles_local, goles_visitante, categoria)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    (local_id, visitante_id, fecha, hora, estado, categoria)
+    VALUES (?, ?, ?, ?, 'Programado', ?)";
 $consulta = mysqli_prepare($conn, $sql);
 if (!$consulta) {
     die("No se pudo preparar el registro del partido.");
 }
-mysqli_stmt_bind_param($consulta, "iisssiis", $local, $visitante, $fecha, $estado, $motivo_suspension, $goles_local, $goles_visitante, $categoria);
+mysqli_stmt_bind_param($consulta, "iisss", $local, $visitante, $fecha, $horaSql, $categoria);
 if (!mysqli_stmt_execute($consulta)) {
     mysqli_stmt_close($consulta);
     die("No se pudo guardar el partido.");

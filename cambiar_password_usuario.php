@@ -12,26 +12,33 @@ if ($_SESSION["rol"] != "admin") {
 }
 
 include("conexion.php");
+require_once(__DIR__ . "/password_storage.php");
 
-$id = $_GET["id"];
+$id = filter_input(INPUT_GET, "id", FILTER_VALIDATE_INT);
 
-$consulta = mysqli_query($conn,"
-SELECT *
-FROM usuarios
-WHERE id='$id'
-");
+$consulta = $conn->prepare("SELECT usuario FROM usuarios WHERE id = ?");
+$consulta->bind_param("i", $id);
+$consulta->execute();
+$usuarioSeleccionado = $consulta->get_result()->fetch_assoc();
 
-$usuarioSeleccionado = mysqli_fetch_assoc($consulta);
+if (!$usuarioSeleccionado) {
+    http_response_code(404);
+    exit("Usuario no encontrado.");
+}
 
 if(isset($_POST["guardar"])){
 
-    $password = $_POST["password"];
+    $password = $_POST["password"] ?? "";
 
-    mysqli_query($conn,"
-    UPDATE usuarios
-    SET password='$password'
-    WHERE id='$id'
-    ");
+    if ($password === "") {
+        http_response_code(400);
+        exit("La contraseña no puede estar vacía.");
+    }
+
+    $passwordHash = hash_user_password($password);
+    $actualizar = $conn->prepare("UPDATE usuarios SET password = ? WHERE id = ?");
+    $actualizar->bind_param("si", $passwordHash, $id);
+    $actualizar->execute();
 
     header("Location: usuarios.php");
     exit();

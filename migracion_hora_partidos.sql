@@ -1,0 +1,2 @@
+ALTER TABLE partidos
+ADD COLUMN hora TIME DEFAULT NULL AFTER fecha;

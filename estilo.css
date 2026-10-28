@@ -363,6 +363,16 @@ tr:last-child td { border-bottom: 0; }
 .regla-puntos { margin: 0 0 20px; color: #5d7485; font-size: 14px; }
 .tabla-clasificacion, .tabla-fixture { margin: 16px 0 28px; }
 .tabla-clasificacion th, .tabla-fixture th { white-space: nowrap; }
+.tabla-fixture { min-width: 100%; }
+.acciones-partido { min-width: 240px; }
+.controles-partido { display: flex; align-items: flex-start; justify-content: center; gap: 8px; }
+.acciones-partido details { min-width: 0; text-align: left; }
+.acciones-partido summary { width: fit-content; cursor: pointer; list-style: none; }
+.acciones-partido summary::-webkit-details-marker { display: none; }
+.boton-icono { min-width: 42px; min-height: 36px; padding: 6px 10px; }
+.form-concluir { min-width: 220px; margin-top: 12px; padding: 14px; border: 1px solid var(--borde); border-radius: 10px; background: var(--superficie); text-align: left; }
+.form-concluir input, .form-concluir select { margin-bottom: 10px; }
+.form-concluir button { width: 100%; }
 .nombre-equipo { font-weight: 700; text-align: left; }
 .puntos-equipo { color: var(--azul-oscuro); font-size: 1.05rem; font-weight: 800; }
 .marcador-fixture { color: var(--azul-oscuro); font-weight: 800; white-space: nowrap; }

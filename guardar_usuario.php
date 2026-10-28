@@ -12,34 +12,30 @@ if ($_SESSION["rol"] != "admin") {
 }
 
 include("conexion.php");
+require_once(__DIR__ . "/password_storage.php");
 
-$usuario = $_POST["usuario"];
-$password = $_POST["password"];
-$club_id = $_POST["club_id"];
+$usuario = trim($_POST["usuario"] ?? "");
+$password = $_POST["password"] ?? "";
+$club_id = $_POST["club_id"] ?? "";
 
-$existe = mysqli_query($conn, "
-SELECT id
-FROM usuarios
-WHERE usuario='$usuario'
-");
+$existe = $conn->prepare("SELECT id FROM usuarios WHERE usuario = ?");
+$existe->bind_param("s", $usuario);
+$existe->execute();
+$resultado = $existe->get_result();
 
-if(mysqli_num_rows($existe) > 0){
+if ($usuario === "" || $password === "" || $resultado->num_rows > 0) {
 
-    echo "<h2>Ese usuario ya existe.</h2>";
+    echo "<h2>" . ($resultado->num_rows > 0 ? "Ese usuario ya existe." : "Completa todos los campos.") . "</h2>";
     echo "<br>";
     echo "<a href='registrar_usuario.php'>Volver</a>";
     exit();
 
 }
 
-$sql = "
-INSERT INTO usuarios
-(usuario,password,rol,club_id)
-VALUES
-('$usuario','$password','club','$club_id')
-";
-
-mysqli_query($conn,$sql);
+$passwordHash = hash_user_password($password);
+$stmt = $conn->prepare("INSERT INTO usuarios (usuario, password, rol, club_id) VALUES (?, ?, 'club', ?)");
+$stmt->bind_param("sss", $usuario, $passwordHash, $club_id);
+$stmt->execute();
 
 header("Location: registrar_usuario.php?ok=1");
 exit();

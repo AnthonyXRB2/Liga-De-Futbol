@@ -12,7 +12,7 @@ require_once("conexion.php");
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Clubes</title>
@@ -36,13 +36,17 @@ require_once("conexion.php");
 
 <?php } ?>
 
+<label for="buscar-club">Buscar club por nombre</label><br>
+<input type="search" id="buscar-club" placeholder="Escribe el nombre del club" autocomplete="off">
+<p id="resultado-busqueda" aria-live="polite"></p>
+
 <table>
 
 <tr>
     <th>Nombre</th>
     <th>Director técnico</th>
     <th>Departamento</th>
-    <th>Ciudad</th>
+    <th>Fecha de fundación</th>
     <th>Estado</th>
 
 <?php if($esAdmin){ ?>
@@ -58,7 +62,7 @@ $consulta = mysqli_query($conn, "SELECT * FROM clubes ORDER BY nombre");
 while($club = mysqli_fetch_assoc($consulta)){
 ?>
 
-<tr>
+<tr class="fila-club">
 
     <td><?php echo htmlspecialchars($club["nombre"], ENT_QUOTES, "UTF-8"); ?></td>
 
@@ -66,7 +70,7 @@ while($club = mysqli_fetch_assoc($consulta)){
 
     <td><?php echo htmlspecialchars($club["departamento"] ?? "", ENT_QUOTES, "UTF-8"); ?></td>
 
-    <td><?php echo htmlspecialchars($club["ciudad"], ENT_QUOTES, "UTF-8"); ?></td>
+    <td><?php echo $club["fecha_fundacion"] ? date("d/m/Y", strtotime($club["fecha_fundacion"])) : "—"; ?></td>
 
     <td>
         <?php
@@ -82,14 +86,18 @@ while($club = mysqli_fetch_assoc($consulta)){
 
     <td>
 
+        <a href="agregar_club.php?id=<?php echo (int) $club["id"]; ?>">
+            <button type="button" aria-label="Editar club" title="Editar club">✏️</button>
+        </a>
+
         <a href="desactivar_club.php?id=<?php echo $club["id"]; ?>">
-            <button>
+            <button type="button" aria-label="<?php echo $club["activo"] == 1 ? "Desactivar club" : "Activar club"; ?>" title="<?php echo $club["activo"] == 1 ? "Desactivar club" : "Activar club"; ?>">
 
             <?php
             if($club["activo"] == 1){
-                echo "Desactivar";
+                echo "⛔";
             }else{
-                echo "Activar";
+                echo "✅";
             }
             ?>
 
@@ -109,6 +117,31 @@ while($club = mysqli_fetch_assoc($consulta)){
 </table>
 
 </div>
+
+<script>
+const buscadorClub = document.getElementById("buscar-club");
+const filasClubes = Array.from(document.querySelectorAll(".fila-club"));
+const resultadoBusqueda = document.getElementById("resultado-busqueda");
+
+function filtrarClubes() {
+    const termino = buscadorClub.value.trim().toLocaleLowerCase("es");
+    let visibles = 0;
+
+    filasClubes.forEach((fila) => {
+        const coincide = fila.cells[0].textContent.trim().toLocaleLowerCase("es").includes(termino);
+        fila.hidden = !coincide;
+        if (coincide) {
+            visibles += 1;
+        }
+    });
+
+    resultadoBusqueda.textContent = termino !== "" && visibles === 0
+        ? "No se encontraron clubes con ese nombre."
+        : "";
+}
+
+buscadorClub.addEventListener("input", filtrarClubes);
+</script>
 
 </body>
 </html>

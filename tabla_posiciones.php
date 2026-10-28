@@ -15,14 +15,14 @@ if (!isset($torneos[$claveTorneo])) {
 }
 $torneo = $torneos[$claveTorneo];
 
-$sqlFixture = "SELECT p.id, p.fecha, p.estado, p.motivo_suspension,
+$sqlFixture = "SELECT p.id, p.fecha, p.hora, p.estado, p.motivo_suspension,
                       p.goles_local, p.goles_visitante, p.local_id, p.visitante_id,
                       c1.nombre AS nombre_local, c2.nombre AS nombre_visitante
                FROM partidos p
                INNER JOIN clubes c1 ON p.local_id = c1.id
                INNER JOIN clubes c2 ON p.visitante_id = c2.id
                WHERE COALESCE(NULLIF(p.categoria, ''), 'Estándar') = ?
-               ORDER BY (p.fecha IS NULL), p.fecha ASC, p.id ASC";
+               ORDER BY (p.fecha IS NULL), p.fecha ASC, p.hora ASC, p.id ASC";
 $consultaFixture = mysqli_prepare($conn, $sqlFixture);
 if (!$consultaFixture) {
     http_response_code(500);
@@ -216,12 +216,17 @@ function escapar($valor)
             <div class="contenedor tabla-fixture">
                 <table>
                     <thead>
-                        <tr><th>Fecha</th><th>Local</th><th>Resultado</th><th>Visitante</th><th>Estado</th></tr>
+                        <tr><th>Fecha y hora</th><th>Local</th><th>Resultado</th><th>Visitante</th><th>Estado</th>
+                            <?php if (($_SESSION['rol'] ?? '') === 'admin') { ?><th>Acciones</th><?php } ?>
+                        </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($fixture as $partido) { ?>
                             <tr>
-                                <td><?php echo $partido['fecha'] ? date('d/m/Y', strtotime($partido['fecha'])) : 'Sin fecha'; ?></td>
+                                <td>
+                                    <?php echo $partido['fecha'] ? date('d/m/Y', strtotime($partido['fecha'])) : 'Sin fecha'; ?>
+                                    <?php if ($partido['hora']) { ?><br><small><?php echo date('h:i A', strtotime($partido['hora'])); ?></small><?php } ?>
+                                </td>
                                 <td><?php echo escapar($partido['nombre_local']); ?></td>
                                 <td class="marcador-fixture">
                                     <?php echo $partido['estado'] === 'Jugado'
@@ -237,6 +242,38 @@ function escapar($valor)
                                         <small class="motivo-fixture"><?php echo escapar($partido['motivo_suspension']); ?></small>
                                     <?php } ?>
                                 </td>
+                                <?php if (($_SESSION['rol'] ?? '') === 'admin') { ?>
+                                    <td class="acciones-partido">
+                                        <div class="controles-partido">
+                                            <details>
+                                                <summary class="boton boton-editar" aria-label="Editar partido" title="Editar partido">📝</summary>
+                                                <form class="form-concluir" action="guardar_conclusion_partido.php" method="POST">
+                                                    <input type="hidden" name="partido_id" value="<?php echo (int) $partido['id']; ?>">
+                                                    <input type="hidden" name="torneo" value="<?php echo escapar($claveTorneo); ?>">
+                                                    <label>Goles del Local</label>
+                                                    <input type="number" name="goles_local" min="0" value="<?php echo $partido['estado'] === 'Jugado' ? (int) $partido['goles_local'] : ''; ?>">
+                                                    <label>Goles del Visitante</label>
+                                                    <input type="number" name="goles_visitante" min="0" value="<?php echo $partido['estado'] === 'Jugado' ? (int) $partido['goles_visitante'] : ''; ?>">
+                                                    <label>Estado</label>
+                                                    <select name="estado" required>
+                                                        <option value="Jugado" <?php echo $partido['estado'] === 'Jugado' ? 'selected' : ''; ?>>Partido jugado</option>
+                                                        <option value="Suspendido" <?php echo $partido['estado'] === 'Suspendido' ? 'selected' : ''; ?>>Suspender partido</option>
+                                                    </select>
+                                                    <label>Motivo de suspensión (si corresponde)</label>
+                                                    <input type="text" name="motivo_suspension" maxlength="255" value="<?php echo escapar($partido['motivo_suspension'] ?? ''); ?>">
+                                                    <button type="submit">Guardar cambios</button>
+                                                </form>
+                                            </details>
+                                            <form class="form-accion" action="eliminar_partido.php" method="POST"
+                                                  onsubmit="return confirm('¿Eliminar este partido y las tarjetas/sanciones asociadas?');">
+                                                <input type="hidden" name="partido_id" value="<?php echo (int) $partido['id']; ?>">
+                                                <input type="hidden" name="torneo" value="<?php echo escapar($claveTorneo); ?>">
+                                                <button class="boton-peligro boton-icono" type="submit"
+                                                        aria-label="Eliminar partido" title="Eliminar partido">🗑️</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                <?php } ?>
                             </tr>
                         <?php } ?>
                     </tbody>

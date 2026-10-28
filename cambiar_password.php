@@ -12,18 +12,23 @@ if (($_SESSION["rol"] ?? "") !== "admin") {
 }
 
 require_once("conexion.php");
+require_once(__DIR__ . "/password_storage.php");
 
 if (isset($_POST["guardar"])) {
 
-    $nueva = $_POST["nueva"];
+    $nueva = $_POST["nueva"] ?? "";
 
-    $id = $_SESSION["id"];
+    if ($nueva === "") {
+        http_response_code(400);
+        die("La contraseña no puede estar vacía.");
+    }
 
-    $sql = "UPDATE usuarios
-            SET password='$nueva'
-            WHERE id='$id'";
+    $nuevaHash = hash_user_password($nueva);
+    $id = (int) $_SESSION["id"];
 
-    mysqli_query($conn, $sql);
+    $stmt = $conn->prepare("UPDATE usuarios SET password = ? WHERE id = ?");
+    $stmt->bind_param("si", $nuevaHash, $id);
+    $stmt->execute();
 
     echo "<p>Contraseña actualizada correctamente.</p>";
 }
