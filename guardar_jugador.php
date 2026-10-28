@@ -45,6 +45,10 @@ if (!preg_match('/^[0-9]{8}$/D', $ci)) {
     die("La cédula debe contener exactamente 8 dígitos.");
 }
 
+if (preg_match('/^(?:([0-9])\1{7}|01234567|12345678|23456789|98765432|87654321|76543210)$/D', $ci)) {
+    die("La cédula no puede repetir el mismo dígito ni ser una secuencia consecutiva.");
+}
+
 $palabrasNombre = explode(" ", $nombre);
 $nombreInvalido = !preg_match('/^\p{Lu}[\p{L}\p{M} ]*$/uD', $nombre)
     || count($palabrasNombre) > 4;

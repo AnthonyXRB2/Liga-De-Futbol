@@ -186,6 +186,11 @@ async function validarCedulaUnica() {
         return false;
     }
 
+    if (/^(?:([0-9])\1{7}|01234567|12345678|23456789|98765432|87654321|76543210)$/.test(cedula.value)) {
+        mostrarErrorCedula("La cédula no puede repetir el mismo dígito ni ser una secuencia consecutiva.");
+        return false;
+    }
+
     mostrarErrorCedula("");
     try {
         const respuesta = await fetch("verificar_ci.php?ci=" + encodeURIComponent(cedula.value), {
