@@ -82,7 +82,7 @@ while($club = mysqli_fetch_assoc($clubes)){
 <span id="altura_error" class="ayuda-fecha" role="alert" hidden></span><br><br>
 
 <label>Peso (kg)</label><br>
-<input type="text" name="masa" inputmode="decimal" maxlength="5" pattern="(?:1[5-9]|[2-6][0-9]|70),[0-9]" data-decimal="masa" aria-describedby="masa_error" placeholder="Ej: 70,5">
+<input type="text" name="masa" inputmode="decimal" maxlength="5" pattern="(?:1[5-9]|[2-8][0-9]|9[0-5]),[0-9]" data-decimal="masa" aria-describedby="masa_error" placeholder="Ej: 70,5">
 <span id="masa_error" class="ayuda-fecha" role="alert" hidden></span><br><br>
 
 <label>Velocidad promedio (m/s)</label><br>
@@ -219,7 +219,7 @@ function validarCampoFisico(campo) {
     let mensaje = "";
     const reglas = {
         altura: { formato: /^(?:1,[0-9]{1,2}|2,(?:0[0-9]?|10?))$/, minimo: 1, maximo: 2.1, rango: "La altura debe estar entre 1,00 y 2,10 m." },
-        masa: { formato: /^(?:1[5-9]|[2-6][0-9]|70),[0-9]$/, minimo: 15, maximo: 70.9, rango: "El peso debe estar entre 15,0 y 70,9 kg." },
+        masa: { formato: /^(?:1[5-9]|[2-8][0-9]|9[0-5]),[0-9]$/, minimo: 15, maximo: 95.9, rango: "El peso debe estar entre 15,0 y 95,9 kg." },
         velocidad: { formato: /^[1-9],[0-9]$/, minimo: 1, maximo: 9.9, rango: "La velocidad debe estar entre 1,0 y 9,9 m/s." }
     };
     const regla = reglas[campo.name];
@@ -242,7 +242,7 @@ camposFisicos.forEach((campo) => {
     campo.addEventListener("input", () => {
         const reglas = {
             altura: { primerDigito: /^[12]$/, digitosEnteros: 1, decimales: 2 },
-            masa: { primerDigito: /^[1-7]$/, digitosEnteros: 2, decimales: 1 },
+            masa: { primerDigito: /^[1-9]$/, digitosEnteros: 2, decimales: 1 },
             velocidad: { primerDigito: /^[1-9]$/, digitosEnteros: 1, decimales: 1 }
         };
         const regla = reglas[campo.name];
@@ -254,7 +254,7 @@ camposFisicos.forEach((campo) => {
             if (enteros.length === 0 && !regla.primerDigito.test(digito)) {
                 break;
             }
-            if (campo.name === "masa" && enteros === "7" && digito !== "0") {
+            if (campo.name === "masa" && enteros === "9" && !/[0-5]/.test(digito)) {
                 break;
             }
             if (campo.name === "masa" && enteros === "1" && !/[5-9]/.test(digito)) {

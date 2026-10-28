@@ -61,7 +61,7 @@ if ($nombreInvalido) {
 
 $limitesFisicos = [
     "altura" => [$alturaIngresada, '/^(?:1,[0-9]{1,2}|2,(?:0[0-9]?|10?))$/D', 1, 2.1, "La altura debe estar entre 1,00 y 2,10 metros."],
-    "masa" => [$masaIngresada, '/^(?:1[5-9]|[2-6][0-9]|70),[0-9]$/D', 15, 70.9, "El peso debe estar entre 15,0 y 70,9 kg."],
+    "masa" => [$masaIngresada, '/^(?:1[5-9]|[2-8][0-9]|9[0-5]),[0-9]$/D', 15, 95.9, "El peso debe estar entre 15,0 y 95,9 kg."],
     "velocidad" => [$velocidadIngresada, '/^[1-9],[0-9]$/D', 1, 9.9, "La velocidad debe estar entre 1,0 y 9,9 m/s."],
 ];
 foreach ($limitesFisicos as [$valorIngresado, $formato, $minimo, $maximo, $mensajeError]) {
