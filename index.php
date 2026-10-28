@@ -33,30 +33,52 @@ if ($rol === 'admin') {
     <title>Inicio</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
-<body>
+<body class="pagina-inicio">
 
 <?php include('menu.php'); ?>
 
-<h2>Bienvenido, <?php echo htmlspecialchars($_SESSION['usuario'], ENT_QUOTES, 'UTF-8'); ?></h2>
-
-<p>Has iniciado sesión como <b><?php echo htmlspecialchars(ucfirst($rol), ENT_QUOTES, 'UTF-8'); ?></b>.</p>
-
-<section class="seccion-comunicados" aria-labelledby="titulo-comunicados">
-    <h2 id="titulo-comunicados">Comunicados recientes</h2>
-
-    <?php if ($consultaComunicados && mysqli_num_rows($consultaComunicados) > 0) { ?>
-        <div class="lista-comunicados">
-            <?php while ($comunicado = mysqli_fetch_assoc($consultaComunicados)) { ?>
-                <article class="comunicado">
-                    <h3><?php echo htmlspecialchars($comunicado['titulo'], ENT_QUOTES, 'UTF-8'); ?></h3>
-                    <p><?php echo nl2br(htmlspecialchars($comunicado['mensaje'], ENT_QUOTES, 'UTF-8')); ?></p>
-                </article>
-            <?php } ?>
+<main class="pagina-contenido inicio">
+    <section class="portada-inicio">
+        <div>
+            <span class="etiqueta-seccion">SISTEMA DE LIGA</span>
+            <h2>¡Bienvenido, <?php echo htmlspecialchars($_SESSION['usuario'], ENT_QUOTES, 'UTF-8'); ?>!</h2>
+            <p>Has iniciado sesión como <strong><?php echo htmlspecialchars(ucfirst($rol), ENT_QUOTES, 'UTF-8'); ?></strong>. Consulta la actividad de la liga y accede rápidamente a sus secciones.</p>
         </div>
-    <?php } else { ?>
-        <p class="sin-comunicados">No hay comunicados publicados por el momento.</p>
+        <nav class="atajos-inicio" aria-label="Accesos rápidos">
+            <?php if ($rol !== 'club') { ?>
+                <a class="boton" href="clubes.php">Ver clubes</a>
+            <?php } ?>
+            <a class="boton boton-secundario" href="jugadores.php">Ver jugadores</a>
+            <a class="boton boton-secundario" href="tabla_posiciones.php">Competencia</a>
+        </nav>
+    </section>
+
+    <?php if ($rol === 'admin') { ?>
+        <section class="resumen-inicio" aria-label="Resumen del sistema">
+            <article class="dato-inicio"><span>Clubes activos</span><strong><?php echo (int) $clubes; ?></strong></article>
+            <article class="dato-inicio"><span>Jugadores</span><strong><?php echo (int) $jugadores; ?></strong></article>
+            <article class="dato-inicio"><span>Partidos</span><strong><?php echo (int) $partidos; ?></strong></article>
+            <article class="dato-inicio"><span>Comunicados</span><strong><?php echo (int) $comunicados; ?></strong></article>
+        </section>
     <?php } ?>
-</section>
+
+    <section class="seccion-comunicados" aria-labelledby="titulo-comunicados">
+        <h2 id="titulo-comunicados">Comunicados recientes</h2>
+
+        <?php if ($consultaComunicados && mysqli_num_rows($consultaComunicados) > 0) { ?>
+            <div class="lista-comunicados">
+                <?php while ($comunicado = mysqli_fetch_assoc($consultaComunicados)) { ?>
+                    <article class="comunicado">
+                        <h3><?php echo htmlspecialchars($comunicado['titulo'], ENT_QUOTES, 'UTF-8'); ?></h3>
+                        <p><?php echo nl2br(htmlspecialchars($comunicado['mensaje'], ENT_QUOTES, 'UTF-8')); ?></p>
+                    </article>
+                <?php } ?>
+            </div>
+        <?php } else { ?>
+            <p class="sin-comunicados">No hay comunicados publicados por el momento.</p>
+        <?php } ?>
+    </section>
+</main>
 
 </body>
 </html>

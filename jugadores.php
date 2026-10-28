@@ -91,43 +91,57 @@ function h($valor)
     <?php } ?>
 
     <form class="filtros-jugadores" method="GET">
-        <?php if ($rol === "club") { ?>
-            <label for="alcance">Plantel que quieres consultar</label>
-            <select id="alcance" name="alcance" onchange="this.form.submit()">
-                <option value="propios" <?php echo $alcance === "propios" ? "selected" : ""; ?>>Mi club</option>
-                <option value="ajenos" <?php echo $alcance === "ajenos" ? "selected" : ""; ?>>Otros clubes</option>
-            </select>
-        <?php } ?>
-
-        <?php if ($rol === "admin" || $alcance === "ajenos") { ?>
-            <label for="club_id"><?php echo $rol === "admin" ? "Seleccionar club" : "Seleccionar otro club"; ?></label>
-            <select id="club_id" name="club_id">
-                <option value="0"><?php echo $rol === "admin" ? "Todos los clubes" : "Elige un club"; ?></option>
-                <?php while ($club = mysqli_fetch_assoc($clubes)) {
-                    if ($rol === "club" && (int) $club["id"] === (int) $_SESSION["club_id"]) {
-                        continue;
-                    }
-                ?>
-                    <option value="<?php echo (int) $club["id"]; ?>" <?php echo $clubSeleccionado === (int) $club["id"] ? "selected" : ""; ?>>
-                        <?php echo h($club["nombre"]); ?>
-                    </option>
-                <?php } ?>
-            </select>
-        <?php } ?>
-
-        <label for="buscar">Buscar por nombre o cédula</label>
-        <input id="buscar" type="search" name="buscar" value="<?php echo h($busqueda); ?>" placeholder="Ej.: nombre o CI">
-
-        <label for="categoria">Categoría</label>
-        <select id="categoria" name="categoria">
-            <option value="">Todas las categorías</option>
-            <?php for ($opcionCategoria = 2013; $opcionCategoria <= 2019; $opcionCategoria++) { ?>
-                <option value="<?php echo $opcionCategoria; ?>" <?php echo $categoria === (string) $opcionCategoria ? "selected" : ""; ?>>
-                    <?php echo $opcionCategoria; ?>
-                </option>
+        <div class="campos-filtros">
+            <?php if ($rol === "club") { ?>
+                <div class="campo-filtro">
+                    <label for="alcance">Plantel que quieres consultar</label>
+                    <select id="alcance" name="alcance" onchange="this.form.submit()">
+                        <option value="propios" <?php echo $alcance === "propios" ? "selected" : ""; ?>>Mi club</option>
+                        <option value="ajenos" <?php echo $alcance === "ajenos" ? "selected" : ""; ?>>Otros clubes</option>
+                    </select>
+                </div>
             <?php } ?>
-        </select>
-        <button type="submit">Aplicar filtros</button>
+
+            <?php if ($rol === "admin" || $alcance === "ajenos") { ?>
+                <div class="campo-filtro">
+                    <label for="club_id"><?php echo $rol === "admin" ? "Seleccionar club" : "Seleccionar otro club"; ?></label>
+                    <select id="club_id" name="club_id">
+                        <option value="0"><?php echo $rol === "admin" ? "Todos los clubes" : "Elige un club"; ?></option>
+                        <?php while ($club = mysqli_fetch_assoc($clubes)) {
+                            if ($rol === "club" && (int) $club["id"] === (int) $_SESSION["club_id"]) {
+                                continue;
+                            }
+                        ?>
+                            <option value="<?php echo (int) $club["id"]; ?>" <?php echo $clubSeleccionado === (int) $club["id"] ? "selected" : ""; ?>>
+                                <?php echo h($club["nombre"]); ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                </div>
+            <?php } ?>
+
+            <div class="campo-filtro campo-busqueda">
+                <label for="buscar">Buscar por nombre o cédula</label>
+                <input id="buscar" type="search" name="buscar" value="<?php echo h($busqueda); ?>" placeholder="Ej.: nombre o CI">
+            </div>
+
+            <div class="campo-filtro">
+                <label for="categoria">Categoría</label>
+                <select id="categoria" name="categoria">
+                    <option value="">Todas las categorías</option>
+                    <?php for ($opcionCategoria = 2013; $opcionCategoria <= 2019; $opcionCategoria++) { ?>
+                        <option value="<?php echo $opcionCategoria; ?>" <?php echo $categoria === (string) $opcionCategoria ? "selected" : ""; ?>>
+                            <?php echo $opcionCategoria; ?>
+                        </option>
+                    <?php } ?>
+                </select>
+            </div>
+        </div>
+
+        <div class="acciones-filtros">
+            <button type="submit">Aplicar filtros</button>
+            <a href="jugadores.php">Limpiar filtros</a>
+        </div>
     </form>
 
     <?php if ($rol === "club" && $alcance === "ajenos" && $clubSeleccionado === 0) { ?>
@@ -166,11 +180,15 @@ function h($valor)
                                 <?php } ?>
                             </td>
                             <?php if ($rol === "admin") { ?>
-                                <td>
-                                    <form class="form-accion" action="eliminar_jugador.php" method="POST" onsubmit="return confirm('¿Eliminar este jugador y sus tarjetas y documentos asociados?');">
-                                        <input type="hidden" name="id" value="<?php echo (int) $fila["id"]; ?>">
-                                        <button class="boton-peligro" type="submit">Eliminar</button>
-                                    </form>
+                                <td class="acciones-jugador">
+                                    <a class="boton boton-editar" href="editar_jugador.php?id=<?php echo (int) $fila["id"]; ?>">Editar</a>
+                                    <details class="menu-acciones-jugador">
+                                        <summary>Más</summary>
+                                        <form class="form-accion" action="eliminar_jugador.php" method="POST" onsubmit="return confirm('¿Eliminar este jugador y sus tarjetas y documentos asociados?');">
+                                            <input type="hidden" name="id" value="<?php echo (int) $fila["id"]; ?>">
+                                            <button class="boton-peligro" type="submit">Eliminar</button>
+                                        </form>
+                                    </details>
                                 </td>
                             <?php } ?>
                         </tr>

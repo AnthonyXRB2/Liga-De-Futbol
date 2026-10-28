@@ -1,0 +1,109 @@
+:root {
+    --azul: #1f5f94;
+    --azul-oscuro: #123d61;
+    --balon: #f2c94c;
+    --tinta: #1e3446;
+    --superficie: #fff;
+    --borde: #d6e1ea;
+    --sombra: 0 16px 38px rgba(7, 31, 52, .25);
+}
+
+* { box-sizing: border-box; }
+
+body {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+body {
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    margin: 0;
+    padding: 24px;
+    color: var(--tinta);
+    cursor: default;
+    background: radial-gradient(ellipse at top, #c3daee, transparent 55%), #174e79;
+    font: 16px/1.5 "Segoe UI", Arial, sans-serif;
+}
+
+.contenido-login { width: min(460px, 100%); }
+.contenido-login h2 {
+    margin: 0 0 20px;
+    color: #fff;
+    font-size: clamp(1.7rem, 5vw, 2.1rem);
+    text-align: center;
+}
+.contenido-login h2::before { content: "⚽ "; color: var(--balon); }
+
+form {
+    margin: 0;
+    padding: 28px;
+    border: 1px solid rgba(255, 255, 255, .55);
+    border-radius: 16px;
+    background: var(--superficie);
+    box-shadow: var(--sombra);
+}
+
+label { display: block; margin-bottom: 5px; color: #294863; font-weight: 700; }
+input {
+    width: 100%;
+    min-height: 46px;
+    margin: 0 0 18px;
+    padding: 10px 12px;
+    border: 1px solid #c8d7e5;
+    border-radius: 8px;
+    color: var(--tinta);
+    background: #fbfdff;
+    cursor: text;
+    font: inherit;
+    -webkit-user-select: text;
+    user-select: text;
+}
+input:focus { outline: 3px solid rgba(31, 95, 148, .18); border-color: var(--azul); }
+
+button {
+    display: flex;
+    width: 100%;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 9px;
+    color: #fff;
+    background: var(--azul);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 750;
+}
+button:hover { background: var(--azul-oscuro); }
+
+.mensaje-error {
+    margin: 0 0 16px;
+    padding: 12px 16px;
+    border-radius: 9px;
+    color: #872e36;
+    background: #fde7e8;
+    text-align: center;
+}
+
+:focus-visible { outline: 3px solid var(--balon); outline-offset: 2px; }
+
+.boton-tema-login {
+    display: block;
+    width: auto;
+    min-height: 38px;
+    margin: 0 0 16px auto;
+    padding: 8px 14px;
+    font-size: .9rem;
+}
+
+:root[data-tema="oscuro"] {
+    --superficie: #202020;
+}
+
+@media (max-width: 480px) {
+    body { padding: 18px; }
+    form { padding: 22px; }
+}

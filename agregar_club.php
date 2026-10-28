@@ -232,7 +232,7 @@ formularioClub.addEventListener("submit", (evento) => {
     padding: 6px;
     border: 1px solid #c6d8c9;
     border-radius: 8px;
-    background: #fff;
+    background: var(--superficie);
     box-shadow: var(--sombra);
 }
 .opciones-departamento button {
@@ -240,7 +240,7 @@ formularioClub.addEventListener("submit", (evento) => {
     min-height: 38px;
     border-radius: 5px;
     color: var(--tinta);
-    background: #fff;
+    background: var(--superficie);
     font-weight: 400;
 }
 .opciones-departamento button:hover,

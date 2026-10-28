@@ -12,6 +12,17 @@ if ($_SESSION["rol"] !== "admin") {
 }
 
 include("conexion.php");
+
+$torneos = [
+    "estandar" => "Estándar",
+    "plata" => "Copa Plata",
+    "oro" => "Copa Oro"
+];
+$claveSolicitada = $_GET["torneo"] ?? "estandar";
+$claveTorneo = is_string($claveSolicitada) && isset($torneos[$claveSolicitada])
+    ? $claveSolicitada
+    : "estandar";
+$categoriaSeleccionada = $torneos[$claveTorneo];
 ?>
 
 <!DOCTYPE html>
@@ -28,6 +39,9 @@ include("conexion.php");
 <h2>Agregar Partido</h2>
 
 <form action="guardar_partido.php" method="POST">
+<?php if (($_GET["origen"] ?? "") === "tabla") { ?>
+<input type="hidden" name="volver_tabla" value="1">
+<?php } ?>
 
 <label>Club Local</label><br>
 <select name="local">
@@ -58,7 +72,19 @@ while($club2 = mysqli_fetch_assoc($clubes2)){
 <br><br>
 
 <label>Fecha</label><br>
-<input type="date" name="fecha">
+<input type="date" name="fecha" required>
+
+<br><br>
+
+<label>Competencia</label><br>
+<select name="categoria" required>
+    <?php foreach ($torneos as $categoria) { ?>
+        <option value="<?php echo htmlspecialchars($categoria, ENT_QUOTES, "UTF-8"); ?>"
+            <?php echo $categoria === $categoriaSeleccionada ? "selected" : ""; ?>>
+            <?php echo htmlspecialchars($categoria, ENT_QUOTES, "UTF-8"); ?>
+        </option>
+    <?php } ?>
+</select>
 
 <br><br>
 

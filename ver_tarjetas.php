@@ -1,23 +1,12 @@
 <?php
 session_start();
 include('restringir_club.php');
-require_once('conexion.php');
-?>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sanciones</title>
-    <link rel="stylesheet" href="estilo.css">
-</head>
-<body>
-<?php include('menu.php'); ?>
 
-<h2>Sanciones</h2>
+$torneos = ['estandar', 'plata', 'oro'];
+$torneo = $_GET['torneo'] ?? 'estandar';
+if (!is_string($torneo) || !in_array($torneo, $torneos, true)) {
+    $torneo = 'estandar';
+}
 
-<div class="contenedor">
-    <p>Aún no hay registro de sanciones disponibles.</p>
-</div>
-
-</body>
-</html>
+header('Location: tabla_posiciones.php?torneo=' . $torneo . '#sanciones');
+exit();

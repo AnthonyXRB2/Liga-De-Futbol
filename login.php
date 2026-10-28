@@ -5,13 +5,16 @@ session_start();
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login</title>
-    <link rel="stylesheet" href="estilo.css">
+    <link rel="stylesheet" href="login.css">
+    <script src="tema.js" defer></script>
 </head>
 <body class="pagina-login">
 <main class="contenido-login">
 
+<button class="boton-tema-login" type="button" aria-pressed="false">Modo oscuro</button>
 <h2>Iniciar Sesión</h2>
 
 <?php if (isset($_SESSION['error_login'])) { ?>
