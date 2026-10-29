@@ -1,5 +1,6 @@
 <?php
 
+// Carga los servicios requeridos y restringe el alta al administrador.
 include("conexion.php");
 include("datos_jugador.php");
 
@@ -37,6 +38,7 @@ $masa = (float) str_replace(",", ".", $masaIngresada);
 $fuerza_peso = $masa * 9.8;
 $velocidad = (float) str_replace(",", ".", $velocidadIngresada);
 
+// Comprueba los campos obligatorios y el formato de la cédula.
 if ($nombre === "" || $posicion === "" || $ci === "" || $club_id <= 0) {
     die("Completa todos los datos obligatorios del jugador.");
 }
@@ -68,6 +70,7 @@ $limitesFisicos = [
     "masa" => [$masaIngresada, '/^(?:1[5-9]|[2-8][0-9]|9[0-5]),[0-9]$/D', 15, 95.9, "El peso debe estar entre 15,0 y 95,9 kg."],
     "velocidad" => [$velocidadIngresada, '/^[1-9],[0-9]$/D', 1, 9.9, "La velocidad debe estar entre 1,0 y 9,9 m/s."],
 ];
+// Valida las medidas opcionales antes de guardarlas como valores numéricos.
 foreach ($limitesFisicos as [$valorIngresado, $formato, $minimo, $maximo, $mensajeError]) {
     if ($valorIngresado === "") {
         continue;
@@ -82,6 +85,7 @@ foreach ($limitesFisicos as [$valorIngresado, $formato, $minimo, $maximo, $mensa
 }
 
 $buscarCedula = mysqli_prepare($conn, "SELECT id FROM jugadores WHERE ci = ? LIMIT 1");
+// Evita registrar una cédula repetida y exige un club activo.
 mysqli_stmt_bind_param($buscarCedula, "s", $ci);
 mysqli_stmt_execute($buscarCedula);
 mysqli_stmt_store_result($buscarCedula);
@@ -102,6 +106,7 @@ if (!$clubActivo) {
 }
 
 $consulta = mysqli_prepare($conn, "INSERT INTO jugadores (nombre, edad, posicion, club_id, ci, categoria, altura, masa, fuerza_peso, velocidad) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+// Persiste el perfil validado y redirige al listado.
 mysqli_stmt_bind_param($consulta, "sisissdddd", $nombre, $edad, $posicion, $club_id, $ci, $categoria, $altura, $masa, $fuerza_peso, $velocidad);
 mysqli_stmt_execute($consulta);
 mysqli_stmt_close($consulta);

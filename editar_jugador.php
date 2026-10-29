@@ -1,4 +1,5 @@
 <?php
+// Valida permisos e identifica el jugador y clubes disponibles para editar.
 session_start();
 
 if (!isset($_SESSION['usuario'])) {
@@ -59,10 +60,11 @@ $escape = static fn($valor) => htmlspecialchars((string) $valor, ENT_QUOTES, 'UT
 <?php include('menu.php'); ?>
 
 <main class="pagina-contenido">
+    <!-- Muestra los datos actuales junto con las opciones válidas de edición. -->
     <h2>Editar jugador</h2>
     <p class="ayuda">Actualiza la información del jugador y guarda los cambios.</p>
 
-    <form action="guardar_edicion_jugador.php" method="POST">
+    <form id="form-editar-jugador" action="guardar_edicion_jugador.php" method="POST">
         <input type="hidden" name="id" value="<?php echo (int) $jugador['id']; ?>">
 
         <label for="nombre">Nombre</label>
@@ -90,7 +92,8 @@ $escape = static fn($valor) => htmlspecialchars((string) $valor, ENT_QUOTES, 'UT
         </select>
 
         <label for="ci">Cédula</label>
-        <input id="ci" type="text" name="ci" inputmode="numeric" pattern="[0-9]{8}" maxlength="8" value="<?php echo $escape($jugador['ci']); ?>" required>
+        <input id="ci" type="text" name="ci" inputmode="numeric" autocomplete="off" pattern="[0-9]{8}" maxlength="8" value="<?php echo $escape($jugador['ci']); ?>" aria-describedby="ci_error" required>
+        <span id="ci_error" class="ayuda-fecha" role="alert" hidden></span>
 
         <label for="categoria">Categoría</label>
         <select id="categoria" name="categoria" required>
@@ -116,5 +119,77 @@ $escape = static fn($valor) => htmlspecialchars((string) $valor, ENT_QUOTES, 'UT
         </div>
     </form>
 </main>
+<script>
+// Conserva la cédula original y prepara la validación de cambios.
+const formularioEdicionJugador = document.getElementById("form-editar-jugador");
+const cedula = document.getElementById("ci");
+const errorCedula = document.getElementById("ci_error");
+const cedulaOriginal = cedula.value;
+
+function mostrarErrorCedula(mensaje) {
+    cedula.setCustomValidity(mensaje);
+    errorCedula.textContent = mensaje;
+    errorCedula.hidden = mensaje === "";
+}
+
+async function validarCedula() {
+    // Permite mantener la cédula actual y verifica las nuevas contra el servidor.
+    if (!/^[0-9]{8}$/.test(cedula.value)) {
+        mostrarErrorCedula("La cédula debe contener exactamente 8 dígitos.");
+        return false;
+    }
+
+    if (/^(?:([0-9])\1{7}|01234567|12345678|23456789|98765432|87654321|76543210)$/.test(cedula.value)) {
+        mostrarErrorCedula("La cédula no puede repetir el mismo dígito ni ser una secuencia consecutiva.");
+        return false;
+    }
+
+    if (cedula.value === cedulaOriginal) {
+        mostrarErrorCedula("");
+        return true;
+    }
+
+    mostrarErrorCedula("");
+    try {
+        const respuesta = await fetch("verificar_ci.php?ci=" + encodeURIComponent(cedula.value), {
+            headers: { "Accept": "application/json" }
+        });
+        if (!respuesta.ok) {
+            throw new Error("No se pudo verificar la cédula.");
+        }
+        const resultado = await respuesta.json();
+        if (!resultado.disponible) {
+            mostrarErrorCedula("Esta cédula ya está registrada. Cada jugador debe tener una cédula única.");
+            return false;
+        }
+        mostrarErrorCedula("");
+        return true;
+    } catch (error) {
+        mostrarErrorCedula("No se pudo comprobar la cédula. Intenta nuevamente.");
+        return false;
+    }
+}
+
+cedula.addEventListener("input", () => {
+    cedula.value = cedula.value.replace(/[^0-9]/g, "").slice(0, 8);
+    mostrarErrorCedula("");
+});
+cedula.addEventListener("blur", validarCedula);
+
+formularioEdicionJugador.addEventListener("submit", async (evento) => {
+    if (formularioEdicionJugador.dataset.ciVerificada === cedula.value) {
+        delete formularioEdicionJugador.dataset.ciVerificada;
+        return;
+    }
+
+    evento.preventDefault();
+    if (await validarCedula()) {
+        formularioEdicionJugador.dataset.ciVerificada = cedula.value;
+        formularioEdicionJugador.requestSubmit();
+    } else {
+        cedula.reportValidity();
+    }
+});
+</script>
 </body>
 </html>

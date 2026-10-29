@@ -1,4 +1,5 @@
 <?php
+// Valida la sesión y elimina el comunicado seleccionado por administración.
 session_start();
 
 if (!isset($_SESSION['usuario'])) {
@@ -20,6 +21,7 @@ if ($id === null || !is_numeric($id)) {
 }
 
 $id = (int)$id;
+// Ejecuta la eliminación y vuelve a la lista de comunicados.
 mysqli_query($conn, "DELETE FROM comunicados WHERE id = $id");
 
 header('Location: comunicados.php');

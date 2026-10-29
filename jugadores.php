@@ -1,4 +1,5 @@
 <?php
+// Restringe el listado por rol y prepara filtros para el plantel visible.
 session_start();
 include("restringir_club.php");
 require_once("conexion.php");
@@ -53,6 +54,7 @@ $sql = "
     $where
     ORDER BY jugadores.nombre
 ";
+// Carga jugadores, club y ficha médica aplicando los filtros seleccionados.
 $consulta = mysqli_query($conn, $sql);
 if (!$consulta) {
     http_response_code(500);
@@ -77,6 +79,7 @@ function h($valor)
 <?php include("menu.php"); ?>
 
 <main class="pagina-contenido">
+    <!-- Los controles de consulta cambian según el alcance del usuario. -->
     <h2>Plantel de jugadores</h2>
     <p class="ayuda">
         <?php if ($rol === "admin") { ?>
@@ -148,6 +151,7 @@ function h($valor)
         <p class="aviso">Selecciona un club en la lista para ver sus jugadores.</p>
     <?php } ?>
 
+    <!-- Presenta el plantel y las acciones reservadas al administrador. -->
     <div class="contenedor">
         <table>
             <thead>

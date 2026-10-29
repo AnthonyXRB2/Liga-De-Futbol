@@ -26,6 +26,7 @@ SET time_zone = "+00:00";
 --
 -- Estructura de tabla para la tabla `clubes`
 --
+-- Registra clubes, su ubicación, fundación y estado de actividad.
 
 CREATE TABLE `clubes` (
   `id` int(11) NOT NULL,
@@ -51,6 +52,7 @@ INSERT INTO `clubes` (`id`, `nombre`, `ciudad`, `activo`) VALUES
 --
 -- Estructura de tabla para la tabla `comunicados`
 --
+-- Almacena los avisos publicados para los usuarios de la liga.
 
 CREATE TABLE `comunicados` (
   `id` int(11) NOT NULL,
@@ -71,6 +73,7 @@ INSERT INTO `comunicados` (`id`, `titulo`, `mensaje`) VALUES
 --
 -- Estructura de tabla para la tabla `documentos`
 --
+-- Relaciona cada jugador con su documentación médica y fechas asociadas.
 
 CREATE TABLE `documentos` (
   `id` int(11) NOT NULL,
@@ -108,6 +111,7 @@ INSERT INTO `documentos` (`id`, `jugador_id`, `ficha_medica`, `fecha_subida_fich
 --
 -- Estructura de tabla para la tabla `jugadores`
 --
+-- Conserva los datos personales, deportivos y físicos de cada jugador.
 
 CREATE TABLE `jugadores` (
   `id` int(11) NOT NULL,
@@ -148,6 +152,7 @@ INSERT INTO `jugadores` (`id`, `nombre`, `edad`, `posicion`, `club_id`, `ci`, `c
 --
 -- Estructura de tabla para la tabla `partidos`
 --
+-- Guarda fixture, resultado, estado y competencia de los encuentros.
 
 CREATE TABLE `partidos` (
   `id` int(11) NOT NULL,
@@ -159,7 +164,8 @@ CREATE TABLE `partidos` (
   `goles_visitante` int(11) DEFAULT NULL,
   `estado` varchar(30) DEFAULT 'Programado',
   `motivo_suspension` varchar(255) DEFAULT NULL,
-  `categoria` varchar(50) DEFAULT NULL
+  `categoria` varchar(50) DEFAULT NULL,
+  `categoria_edad` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -176,6 +182,7 @@ INSERT INTO `partidos` (`id`, `local_id`, `visitante_id`, `fecha`, `goles_local`
 --
 -- Estructura de tabla para la tabla `tarjetas`
 --
+-- Vincula sanciones con el jugador y el partido donde se registraron.
 
 CREATE TABLE `tarjetas` (
   `id` int(11) NOT NULL,
@@ -199,6 +206,7 @@ INSERT INTO `tarjetas` (`id`, `jugador_id`, `partido_id`, `tipo`, `motivo`, `fec
 --
 -- Estructura de tabla para la tabla `usuarios`
 --
+-- Define cuentas, credenciales protegidas, roles y club asociado.
 
 CREATE TABLE `usuarios` (
   `id` int(11) NOT NULL,
@@ -219,6 +227,7 @@ INSERT INTO `usuarios` (`id`, `usuario`, `password`, `rol`, `club_id`) VALUES
 --
 -- Índices para tablas volcadas
 --
+-- Define claves primarias y de búsqueda para las relaciones del esquema.
 
 --
 -- Indices de la tabla `clubes`
@@ -271,6 +280,7 @@ ALTER TABLE `usuarios`
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
+-- Continúa la numeración automática de los identificadores.
 
 --
 -- AUTO_INCREMENT de la tabla `clubes`
@@ -317,6 +327,7 @@ ALTER TABLE `usuarios`
 --
 -- Restricciones para tablas volcadas
 --
+-- Garantiza que documentos, planteles y sanciones apunten a registros existentes.
 
 --
 -- Filtros para la tabla `documentos`

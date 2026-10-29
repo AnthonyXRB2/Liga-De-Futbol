@@ -1,4 +1,5 @@
 <?php
+// Prepara las competencias y categorías disponibles para el nuevo partido.
 session_start();
 
 if (!isset($_SESSION["usuario"])) {
@@ -23,6 +24,7 @@ $claveTorneo = is_string($claveSolicitada) && isset($torneos[$claveSolicitada])
     ? $claveSolicitada
     : "estandar";
 $categoriaSeleccionada = $torneos[$claveTorneo];
+$categoriasEdad = range(2012, 2019);
 ?>
 
 <!DOCTYPE html>
@@ -38,10 +40,21 @@ $categoriaSeleccionada = $torneos[$claveTorneo];
 
 <h2>Agregar Partido</h2>
 
+<!-- Recoge clubes, categoría, fecha, hora y competencia. -->
 <form action="guardar_partido.php" method="POST">
 <?php if (($_GET["origen"] ?? "") === "tabla") { ?>
 <input type="hidden" name="volver_tabla" value="1">
 <?php } ?>
+
+<label for="categoria_edad">Categoría</label><br>
+<select id="categoria_edad" name="categoria_edad" required>
+    <option value="">Selecciona una categoría</option>
+    <?php foreach ($categoriasEdad as $categoriaEdad) { ?>
+        <option value="<?php echo $categoriaEdad; ?>"><?php echo $categoriaEdad; ?></option>
+    <?php } ?>
+</select>
+
+<br><br>
 
 <label>Club Local</label><br>
 <select name="local">
@@ -103,6 +116,7 @@ while($club2 = mysqli_fetch_assoc($clubes2)){
 </form>
 
 <script>
+// Valida fecha y hora y da formato a la entrada de hora mientras se escribe.
 const fechaPartido = document.getElementById("fecha");
 const errorFecha = document.getElementById("fecha-error");
 const horaPartido = document.getElementById("hora");
@@ -127,6 +141,7 @@ function validarFechaPartido(mostrarMensaje = false) {
     return !mensaje;
 }
 
+// Convierte variantes de entrada en una hora de reloj legible y consistente.
 function formatearHora(valor) {
     const entrada = valor.replace(/m/gi, "").replace(/[^0-9:ap]/gi, "").toUpperCase();
     const separador = entrada.indexOf(":");
@@ -205,6 +220,7 @@ function finalizarHora() {
 
 horaPartido.addEventListener("blur", finalizarHora);
 
+// Revisa nuevamente ambos campos antes de permitir el envío.
 formularioPartido.addEventListener("submit", (evento) => {
     const fechaCorrecta = validarFechaPartido();
     finalizarHora();

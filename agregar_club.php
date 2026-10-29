@@ -1,4 +1,5 @@
 <?php
+// Autoriza al administrador y carga los datos si se trata de una edición.
 session_start();
 
 if (!isset($_SESSION["usuario"])) {
@@ -15,6 +16,7 @@ require_once("conexion.php");
 
 $id = filter_input(INPUT_GET, "id", FILTER_VALIDATE_INT);
 $clubEditando = null;
+// Recupera el registro seleccionado para rellenar el formulario de edición.
 if ($id !== null) {
     if ($id === false || $id < 1) {
         http_response_code(400);
@@ -58,6 +60,7 @@ $valorCampo = static function (string $campo) use ($clubEditando): string {
 
 <h2><?php echo $clubEditando ? "Editar Club" : "Agregar Club"; ?></h2>
 
+<!-- Formulario con campos de identificación, ubicación y fundación del club. -->
 <form id="form-club" action="guardar_club.php" method="POST" novalidate>
     <?php if ($clubEditando) { ?>
         <input type="hidden" name="id" value="<?php echo (int) $id; ?>">
@@ -107,8 +110,8 @@ $valorCampo = static function (string $campo) use ($clubEditando): string {
     <br><br>
 
     <label for="fecha_fundacion">Fecha de fundación</label><br>
-    <input type="date" id="fecha_fundacion" name="fecha_fundacion" min="2000-01-01" max="2032-12-31" aria-describedby="fecha-fundacion-ayuda" value="<?php echo $valorCampo("fecha_fundacion"); ?>" required>
-    <small id="fecha-fundacion-ayuda">Permitido desde el 01/01/2000 hasta el 31/12/2032.</small>
+    <input type="date" id="fecha_fundacion" name="fecha_fundacion" min="1950-01-01" max="2100-12-31" aria-describedby="fecha-fundacion-ayuda" value="<?php echo $valorCampo("fecha_fundacion"); ?>" required>
+    <small id="fecha-fundacion-ayuda">Permitido desde el 01/01/1950.</small>
 
     <br><br>
 
@@ -117,6 +120,7 @@ $valorCampo = static function (string $campo) use ($clubEditando): string {
 </form>
 
 <script>
+// Valida nombres compuestos y normaliza mayúsculas y espacios al escribir.
 function configurarNombreCompuesto(campo, maxEspacios, avisoEspacio) {
     function validar(mostrarAvisoEspacio = false) {
         const palabras = campo.value.split(" ");
@@ -205,6 +209,7 @@ const departamentoSeleccionado = document.getElementById("departamento");
 const formularioClub = document.getElementById("form-club");
 
 selectorDepartamento.querySelectorAll("[data-departamento]").forEach((opcion) => {
+    // Guarda la selección y cierra el desplegable de departamentos.
     opcion.addEventListener("click", () => {
         departamentoSeleccionado.value = opcion.dataset.departamento;
         selectorDepartamento.querySelector("summary").textContent = opcion.textContent;
@@ -220,6 +225,7 @@ document.addEventListener("click", (evento) => {
 });
 
 formularioClub.addEventListener("submit", (evento) => {
+    // Evita enviar nombres incompletos o sin departamento seleccionado.
     validarNombreClub(true);
     validarDirectorTecnico(true);
 
@@ -250,10 +256,10 @@ formularioClub.addEventListener("submit", (evento) => {
 .selector-departamento summary {
     min-height: 44px;
     padding: 10px 12px;
-    border: 1px solid #c6d8c9;
+    border: 1px solid var(--borde);
     border-radius: 8px;
     color: var(--tinta);
-    background: #fbfdfb;
+    background: var(--superficie);
     cursor: pointer;
     list-style: none;
 }
@@ -270,7 +276,7 @@ formularioClub.addEventListener("submit", (evento) => {
     max-height: 260px;
     overflow-y: auto;
     padding: 6px;
-    border: 1px solid #c6d8c9;
+    border: 1px solid var(--borde);
     border-radius: 8px;
     background: var(--superficie);
     box-shadow: var(--sombra);

@@ -1,4 +1,5 @@
 <?php
+// Limita la administración de cuentas al usuario administrador.
 session_start();
 
 if (!isset($_SESSION["usuario"])) {
@@ -61,8 +62,10 @@ ORDER BY usuarios.usuario
 
 ";
 
+// Relaciona cada cuenta con el nombre de su club para la tabla.
 $consulta=mysqli_query($conn,$sql);
 
+// Muestra acciones de contraseña y eliminación para cada usuario.
 while($fila=mysqli_fetch_assoc($consulta)){
 ?>
 

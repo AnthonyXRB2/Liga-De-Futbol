@@ -1,4 +1,5 @@
 <?php
+// Verifica que solo un administrador gestione claves de otras cuentas.
 session_start();
 
 if (!isset($_SESSION["usuario"])) {
@@ -16,6 +17,7 @@ require_once(__DIR__ . "/password_storage.php");
 
 $id = filter_input(INPUT_GET, "id", FILTER_VALIDATE_INT);
 
+// Carga el nombre de la cuenta que se va a actualizar.
 $consulta = $conn->prepare("SELECT usuario FROM usuarios WHERE id = ?");
 $consulta->bind_param("i", $id);
 $consulta->execute();
@@ -28,6 +30,7 @@ if (!$usuarioSeleccionado) {
 
 if(isset($_POST["guardar"])){
 
+    // Valida y almacena la nueva contraseña con el formato protegido.
     $password = $_POST["password"] ?? "";
 
     if ($password === "") {
@@ -58,6 +61,7 @@ if(isset($_POST["guardar"])){
 
 <h2>Cambiar Contraseña</h2>
 
+<!-- Identifica la cuenta objetivo antes de capturar la nueva clave. -->
 <p><b>Usuario:</b> <?php echo $usuarioSeleccionado["usuario"]; ?></p>
 
 <form method="POST">

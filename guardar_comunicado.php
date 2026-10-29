@@ -1,5 +1,6 @@
 <?php
 
+// Autoriza la edición o publicación y limita el procesamiento a POST.
 session_start();
 
 if(!isset($_SESSION["usuario"])){
@@ -24,6 +25,7 @@ $id = (int) ($_POST['id'] ?? 0);
 
 // Validación sencilla
 if ($titulo !== "" && $mensaje !== "") {
+    // Un identificador existente actualiza; sin él se crea un comunicado.
     if ($id > 0) {
         $sentencia = mysqli_prepare($conn, 'UPDATE comunicados SET titulo = ?, mensaje = ? WHERE id = ?');
         mysqli_stmt_bind_param($sentencia, 'ssi', $titulo, $mensaje, $id);

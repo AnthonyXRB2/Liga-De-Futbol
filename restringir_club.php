@@ -1,4 +1,5 @@
 <?php
+// Mantiene la sesión válida antes de aplicar restricciones por tipo de cuenta.
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -9,6 +10,7 @@ if (!isset($_SESSION['usuario'])) {
 }
 
 if (($_SESSION['rol'] ?? '') === 'club') {
+    // Comprueba que el club asociado siga habilitado.
     if (!isset($conn)) {
         include('conexion.php');
     }

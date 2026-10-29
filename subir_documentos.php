@@ -1,4 +1,5 @@
 <?php
+// Carga los jugadores del club autenticado para actualizar sus fichas.
 session_start();
 include("restringir_club.php");
 
@@ -37,6 +38,7 @@ $jugadores = mysqli_stmt_get_result($jugadoresStmt);
 
 <h2>Actualizar documentación de un jugador</h2>
 
+<!-- Informa el resultado de la carga y ofrece el formulario de imagen. -->
 <p class="ayuda">Elige un jugador de tu club y carga su ficha médica. Si aún no aparece en la lista, solicita al administrador que lo registre.</p>
 
 <?php if ($mensaje !== "") { ?>

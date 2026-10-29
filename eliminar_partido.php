@@ -1,4 +1,5 @@
 <?php
+// Restringe la operación al administrador y valida la solicitud de borrado.
 session_start();
 
 if (!isset($_SESSION["usuario"])) {
@@ -36,6 +37,7 @@ if (!mysqli_begin_transaction($conn)) {
     exit("No se pudo iniciar la eliminación del partido.");
 }
 
+// Elimina sanciones asociadas y partido dentro de la misma transacción.
 $consultaTarjetas = mysqli_prepare($conn, "DELETE FROM tarjetas WHERE partido_id = ?");
 if (!$consultaTarjetas) {
     mysqli_rollback($conn);

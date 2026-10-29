@@ -1,4 +1,5 @@
 <?php
+// Autoriza el cambio de estado y valida el identificador recibido.
 session_start();
 
 if (!isset($_SESSION['usuario'])) {
@@ -20,6 +21,7 @@ if (!$id || $id < 1) {
 }
 
 $consulta = mysqli_prepare($conn, 'SELECT activo FROM clubes WHERE id = ? LIMIT 1');
+// Invierte el estado entre activo e inactivo cuando el club existe.
 mysqli_stmt_bind_param($consulta, 'i', $id);
 mysqli_stmt_execute($consulta);
 $resultado = mysqli_stmt_get_result($consulta);

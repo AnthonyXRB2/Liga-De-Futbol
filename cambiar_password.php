@@ -1,4 +1,5 @@
 <?php
+// Limita este formulario de cambio de clave a administradores autenticados.
 session_start();
 include('restringir_club.php');
 if(!isset($_SESSION["usuario"])){
@@ -16,6 +17,7 @@ require_once(__DIR__ . "/password_storage.php");
 
 if (isset($_POST["guardar"])) {
 
+    // Protege la nueva clave y guarda el cambio en la cuenta actual.
     $nueva = $_POST["nueva"] ?? "";
 
     if ($nueva === "") {
@@ -47,6 +49,7 @@ if (isset($_POST["guardar"])) {
 
 <h2>Cambiar Contraseña</h2>
 
+<!-- Solicita una nueva clave al administrador. -->
 <form method="POST">
 
     <label>Nueva contraseña</label><br>

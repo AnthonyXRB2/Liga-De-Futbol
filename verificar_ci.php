@@ -1,4 +1,5 @@
 <?php
+// Prepara una respuesta JSON para validar la cédula desde los formularios.
 session_start();
 header('Content-Type: application/json; charset=utf-8');
 
@@ -14,6 +15,7 @@ if (($_SESSION['rol'] ?? '') !== 'admin') {
 }
 
 $ci = $_GET['ci'] ?? '';
+// Acepta solo cédulas numéricas con la longitud prevista.
 if (!is_string($ci) || !preg_match('/^[0-9]{1,8}$/D', $ci)) {
     http_response_code(400);
     echo json_encode(['disponible' => false, 'error' => 'La cédula debe contener entre 1 y 8 dígitos.']);
@@ -21,6 +23,7 @@ if (!is_string($ci) || !preg_match('/^[0-9]{1,8}$/D', $ci)) {
 }
 
 require_once('conexion.php');
+// Comprueba si ya existe un jugador con la cédula indicada.
 $consulta = mysqli_prepare($conn, 'SELECT id FROM jugadores WHERE ci = ? LIMIT 1');
 if (!$consulta) {
     http_response_code(500);

@@ -1,4 +1,5 @@
 <?php
+// Autoriza la edición y limita la actualización a solicitudes POST.
 session_start();
 
 if (!isset($_SESSION['usuario'])) {
@@ -38,6 +39,7 @@ if (!is_string($nombre) || !is_string($ci)) {
 $nombre = trim($nombre);
 $ci = trim($ci);
 
+// Convierte y valida las medidas que llegan desde el formulario.
 foreach (['altura', 'masa', 'velocidad'] as $campo) {
     $valor = $_POST[$campo] ?? null;
     if (!is_string($valor) || !is_numeric($valor)) {
@@ -51,6 +53,7 @@ $posicionesPermitidas = ['Arquero', 'Defensa', 'Mediocampista', 'Delantero'];
 $nombreValido = preg_match('/\A[\p{L}\p{M}][\p{L}\p{M} .\'-]{0,99}\z/uD', $nombre) === 1;
 $categoriaValida = is_string($categoria) && preg_match('/\A(?:201[2-9])\z/D', $categoria) === 1;
 
+// Valida rangos, opciones del formulario y formato de la identificación.
 if ($jugadorId === false || $jugadorId === null ||
     $edad === false || $edad === null || $edad < 0 || $edad > 100 ||
     $clubId === false || $clubId === null ||
@@ -65,7 +68,13 @@ if ($jugadorId === false || $jugadorId === null ||
     exit('Revisa los datos del jugador e intenta nuevamente.');
 }
 
+if (preg_match('/\A(?:([0-9])\1{7}|01234567|12345678|23456789|98765432|87654321|76543210)\z/D', $ci)) {
+    http_response_code(400);
+    exit('La cédula no puede repetir el mismo dígito ni ser una secuencia consecutiva.');
+}
+
 $consultaClub = mysqli_prepare($conn, 'SELECT id FROM clubes WHERE id = ? AND activo = 1');
+// Confirma que el club destino siga activo antes de modificar el jugador.
 if (!$consultaClub) {
     http_response_code(500);
     exit('No se pudo validar el club seleccionado.');
@@ -84,6 +93,7 @@ if (!$clubValido) {
 }
 
 $consultaActual = mysqli_prepare($conn, 'SELECT ci FROM jugadores WHERE id = ? LIMIT 1');
+// Carga el registro y, si cambió, verifica que la nueva cédula sea única.
 if (!$consultaActual) {
     http_response_code(500);
     exit('No se pudo comprobar el jugador.');
@@ -132,6 +142,7 @@ $consulta = mysqli_prepare(
          altura = ?, masa = ?, fuerza_peso = ?, velocidad = ?
      WHERE id = ?'
 );
+// Guarda conjuntamente el perfil y las magnitudes físicas calculadas.
 if (!$consulta) {
     http_response_code(500);
     exit('No se pudo preparar la actualización del jugador.');

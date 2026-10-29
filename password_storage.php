@@ -1,5 +1,6 @@
 <?php
 
+// Genera hashes de contraseña y los codifica para su almacenamiento seguro.
 function hash_user_password(string $password): string
 {
     $hash = password_hash($password, PASSWORD_DEFAULT);
@@ -11,6 +12,7 @@ function hash_user_password(string $password): string
     return "hash:" . bin2hex($hash);
 }
 
+// Recupera el hash binario y rechaza codificaciones mal formadas.
 function decode_stored_password_hash(string $storedPassword): string|false
 {
     $encodedHash = substr($storedPassword, 5);
@@ -22,6 +24,7 @@ function decode_stored_password_hash(string $storedPassword): string|false
     return hex2bin($encodedHash);
 }
 
+// Admite hashes actuales y contraseñas legadas durante la migración.
 function verify_user_password(string $password, string $storedPassword): bool
 {
     if (str_starts_with($storedPassword, "hash:")) {
@@ -33,6 +36,7 @@ function verify_user_password(string $password, string $storedPassword): bool
     return hash_equals($storedPassword, $password);
 }
 
+// Identifica claves que todavía necesitan migración o actualización.
 function user_password_needs_rehash(string $storedPassword): bool
 {
     if (!str_starts_with($storedPassword, "hash:")) {

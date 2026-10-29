@@ -1,4 +1,5 @@
 <?php
+// Restringe la publicación de comunicados al administrador.
 session_start();
 
 if (!isset($_SESSION["usuario"])) {
@@ -26,6 +27,7 @@ if ($_SESSION["rol"] != "admin") {
 
 <h2>Agregar Comunicado</h2>
 
+<!-- Recibe título y mensaje para crear el nuevo aviso. -->
 <?php if (isset($_GET['error'])) { ?>
     <p class="mensaje-error">Complet&aacute; el t&iacute;tulo y el mensaje.</p>
 <?php } ?>

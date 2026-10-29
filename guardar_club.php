@@ -1,5 +1,6 @@
 <?php
 
+// Autoriza la operación y define los departamentos válidos del país.
 include("conexion.php");
 
 session_start();
@@ -26,6 +27,7 @@ $departamento = $_POST["departamento"] ?? "";
 $fechaFundacion = $_POST["fecha_fundacion"] ?? "";
 $id = $_POST["id"] ?? null;
 
+// Rechaza tipos de entrada inesperados antes de validar los campos.
 if (
     !is_string($nombre)
     || !is_string($directorTecnico)
@@ -42,6 +44,7 @@ $fechaFundacion = trim($fechaFundacion);
 
 function fechaFundacionValida(string $fecha): bool
 {
+    // Limita la fecha al formato ISO y al intervalo permitido por el sitio.
     if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/D', $fecha, $partes) !== 1) {
         return false;
     }
@@ -58,6 +61,7 @@ function fechaFundacionValida(string $fecha): bool
 
 function nombreCompuestoValido(string $valor, int $maxPalabras): bool
 {
+    // Verifica mayúsculas iniciales y longitud de cada palabra.
     $patron = '/^\p{Lu}[\p{Ll}\p{M}]*(?: \p{Lu}[\p{Ll}\p{M}]*){0,' . ($maxPalabras - 1) . '}$/uD';
     if (preg_match($patron, $valor) !== 1) {
         return false;
@@ -84,6 +88,7 @@ if (
 }
 
 $consulta = $id === null
+    // Inserta un club nuevo o actualiza el existente.
     ? mysqli_prepare(
         $conn,
         "INSERT INTO clubes (nombre, fecha_fundacion, director_tecnico, departamento) VALUES (?, ?, ?, ?)"

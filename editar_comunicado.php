@@ -1,4 +1,5 @@
 <?php
+// Comprueba permisos y recupera el comunicado que se editará.
 session_start();
 if (!isset($_SESSION['usuario'])) {
     header('Location: login.php');
@@ -12,6 +13,7 @@ if (($_SESSION['rol'] ?? '') !== 'admin') {
 require_once('conexion.php');
 $id = (int) ($_GET['id'] ?? 0);
 $consulta = mysqli_prepare($conn, 'SELECT titulo, mensaje FROM comunicados WHERE id = ? LIMIT 1');
+// Si el identificador no corresponde a un aviso, vuelve a la lista.
 mysqli_stmt_bind_param($consulta, 'i', $id);
 mysqli_stmt_execute($consulta);
 $resultado = mysqli_stmt_get_result($consulta);
@@ -33,6 +35,7 @@ if (!$comunicado) {
 <body>
 <?php include('menu.php'); ?>
 <main class="pagina-contenido">
+    <!-- Rellena el formulario con contenido escapado del comunicado actual. -->
     <h2>Editar comunicado</h2>
     <?php if (isset($_GET['error'])) { ?><p class="mensaje-error">Completa el título y el mensaje.</p><?php } ?>
     <form action="guardar_comunicado.php" method="POST">

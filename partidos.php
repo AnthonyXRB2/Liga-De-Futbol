@@ -1,4 +1,5 @@
 <?php
+// Mantiene los filtros elegidos y abre la sección de partidos del torneo.
 session_start();
 include('restringir_club.php');
 

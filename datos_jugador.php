@@ -1,6 +1,8 @@
 <?php
+// Valida la fecha de nacimiento y deriva edad y categoría del jugador.
 function calcular_datos_nacimiento($fechaNacimiento)
 {
+    // Rechaza fechas mal formadas, fuera de rango o posteriores a hoy.
     if (!is_string($fechaNacimiento) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fechaNacimiento)) {
         return false;
     }

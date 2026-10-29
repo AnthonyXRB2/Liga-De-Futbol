@@ -1,4 +1,5 @@
 <?php
+// Autoriza el registro y valida el formato de los datos disciplinarios.
 session_start();
 
 if (!isset($_SESSION['usuario'])) {
@@ -20,11 +21,13 @@ require_once('conexion.php');
 
 $jugadorId = filter_input(INPUT_POST, 'jugador_id', FILTER_VALIDATE_INT);
 $partidoId = filter_input(INPUT_POST, 'partido_id', FILTER_VALIDATE_INT);
+$categoriaEdad = $_POST['categoria_edad'] ?? null;
 $tipo = $_POST['tipo'] ?? null;
 $motivo = $_POST['motivo'] ?? '';
 
 if ($jugadorId === false || $jugadorId === null || $jugadorId < 1 ||
     $partidoId === false || $partidoId === null || $partidoId < 1 ||
+    !is_string($categoriaEdad) || preg_match('/\A201[2-9]\z/D', $categoriaEdad) !== 1 ||
     !is_string($tipo) || !is_string($motivo) ||
     !in_array($tipo, ['Amarilla', 'Roja'], true) ||
     preg_match('/\A.{0,255}\z/us', trim($motivo)) !== 1) {
@@ -39,7 +42,8 @@ if (!mysqli_begin_transaction($conn)) {
 }
 
 try {
-    $consultaJugador = mysqli_prepare($conn, 'SELECT id, club_id FROM jugadores WHERE id = ? FOR UPDATE');
+    // Bloquea y valida al jugador y el partido para mantener coherentes sus datos.
+    $consultaJugador = mysqli_prepare($conn, 'SELECT id, club_id, categoria FROM jugadores WHERE id = ? FOR UPDATE');
     if (!$consultaJugador) {
         throw new RuntimeException('No se pudo validar el jugador: ' . mysqli_error($conn));
     }
@@ -55,25 +59,37 @@ try {
 
     $consultaPartido = mysqli_prepare(
         $conn,
-        'SELECT p.categoria
+        'SELECT p.categoria, p.categoria_edad, p.local_id, p.visitante_id, p.estado
          FROM partidos p
-         WHERE p.id = ? AND (p.local_id = ? OR p.visitante_id = ?)
+         WHERE p.id = ?
          LIMIT 1'
     );
     if (!$consultaPartido) {
         throw new RuntimeException('No se pudo validar el partido: ' . mysqli_error($conn));
     }
-    mysqli_stmt_bind_param($consultaPartido, 'iii', $partidoId, $jugador['club_id'], $jugador['club_id']);
+    mysqli_stmt_bind_param($consultaPartido, 'i', $partidoId);
     if (!mysqli_stmt_execute($consultaPartido)) {
         throw new RuntimeException('No se pudo validar el partido: ' . mysqli_stmt_error($consultaPartido));
     }
     $partido = mysqli_fetch_assoc(mysqli_stmt_get_result($consultaPartido));
     mysqli_stmt_close($consultaPartido);
     if (!$partido) {
+        throw new DomainException('El partido seleccionado no existe.');
+    }
+    if ($partido['estado'] !== 'Jugado') {
+        throw new DomainException('El partido no ha sido jugado. Solo puedes registrar sanciones en partidos jugados.');
+    }
+    if ((int) $jugador['club_id'] !== (int) $partido['local_id'] &&
+        (int) $jugador['club_id'] !== (int) $partido['visitante_id']) {
         throw new DomainException('El jugador debe pertenecer a uno de los clubes del partido.');
+    }
+    if ($partido['categoria_edad'] !== $categoriaEdad ||
+        $jugador['categoria'] !== $partido['categoria_edad']) {
+        throw new DomainException('El jugador y el partido deben pertenecer a la categoría seleccionada.');
     }
 
     $categoria = $partido['categoria'] ?: 'Estándar';
+    // Cuenta las tarjetas acumuladas en la competencia del partido.
     $consultaConteo = mysqli_prepare(
         $conn,
         "SELECT
@@ -106,6 +122,7 @@ try {
         throw new DomainException('Este jugador ya tiene una tarjeta roja en esta competencia.');
     }
 
+    // Registra la tarjeta y genera la roja automática por doble amarilla.
     $consulta = mysqli_prepare(
         $conn,
         'INSERT INTO tarjetas (jugador_id, partido_id, tipo, motivo) VALUES (?, ?, ?, ?)'

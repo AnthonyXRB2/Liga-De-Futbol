@@ -1,4 +1,5 @@
 <?php
+// Comprueba que la solicitud provenga de una cuenta de club y método POST.
 session_start();
 include("restringir_club.php");
 
@@ -22,6 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 $clubId = (int) ($_SESSION["club_id"] ?? 0);
 $jugadorId = (int) ($_POST["jugador_id"] ?? 0);
 
+// Verifica que el jugador pertenezca al club de la sesión.
 if ($clubId <= 0 || $jugadorId <= 0) {
     header("Location: subir_documentos.php?error=" . urlencode("Selecciona un jugador de tu club."));
     exit();
@@ -44,6 +46,7 @@ if (!isset($_FILES["ficha_medica"]) || $_FILES["ficha_medica"]["error"] !== UPLO
 }
 
 $archivo = $_FILES["ficha_medica"];
+// Aplica límites de tamaño y valida el contenido real de la imagen.
 if ($archivo["size"] > 10 * 1024 * 1024) {
     header("Location: subir_documentos.php?error=" . urlencode("La imagen no puede superar los 10 MB."));
     exit();
@@ -66,12 +69,14 @@ $nombreArchivo = "ficha_" . date("YmdHis") . "_" . bin2hex(random_bytes(8)) . ".
 $rutaRelativa = "uploads/" . $nombreArchivo;
 $rutaCompleta = $carpeta . DIRECTORY_SEPARATOR . $nombreArchivo;
 
+// Guarda la imagen con nombre aleatorio para evitar colisiones.
 if (!move_uploaded_file($archivo["tmp_name"], $rutaCompleta)) {
     header("Location: subir_documentos.php?error=" . urlencode("No se pudo guardar la imagen."));
     exit();
 }
 
 try {
+    // Sustituye la ficha más reciente o crea el primer registro documental.
     $fechaActual = date("Y-m-d H:i:s");
     $buscarDocumento = mysqli_prepare($conn, "SELECT id FROM documentos WHERE jugador_id = ? ORDER BY id DESC LIMIT 1");
     mysqli_stmt_bind_param($buscarDocumento, "i", $jugadorId);

@@ -1,4 +1,5 @@
 <?php
+// Carga los comunicados recientes y el resumen visible para administración.
 session_start();
 include('restringir_club.php');
 
@@ -15,6 +16,7 @@ $consultaComunicados = mysqli_query(
     'SELECT titulo, mensaje FROM comunicados ORDER BY id DESC LIMIT 5'
 );
 
+// Cuenta los registros principales únicamente para el panel administrativo.
 if ($rol === 'admin') {
     $clubes = mysqli_fetch_assoc(mysqli_query($conn, 'SELECT COUNT(*) AS total FROM clubes WHERE activo=1'))['total'];
     $jugadores = mysqli_fetch_assoc(mysqli_query($conn, 'SELECT COUNT(*) AS total FROM jugadores'))['total'];
@@ -38,6 +40,7 @@ if ($rol === 'admin') {
 <?php include('menu.php'); ?>
 
 <main class="pagina-contenido inicio">
+    <!-- Presentación de la sesión y enlaces a las áreas más consultadas. -->
     <section class="portada-inicio">
         <div>
             <span class="etiqueta-seccion">SISTEMA DE LIGA</span>
@@ -53,6 +56,7 @@ if ($rol === 'admin') {
         </nav>
     </section>
 
+    <!-- Resume las cifras básicas del sistema para el administrador. -->
     <?php if ($rol === 'admin') { ?>
         <section class="resumen-inicio" aria-label="Resumen del sistema">
             <article class="dato-inicio"><span>Clubes activos</span><strong><?php echo (int) $clubes; ?></strong></article>
@@ -62,6 +66,7 @@ if ($rol === 'admin') {
         </section>
     <?php } ?>
 
+    <!-- Muestra los últimos avisos disponibles para todos los usuarios. -->
     <section class="seccion-comunicados" aria-labelledby="titulo-comunicados">
         <h2 id="titulo-comunicados">Comunicados recientes</h2>
 

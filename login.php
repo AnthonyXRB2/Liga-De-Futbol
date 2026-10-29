@@ -1,4 +1,5 @@
 <?php
+// Recupera el mensaje de acceso para mostrarlo junto al formulario.
 session_start();
 ?>
 
@@ -9,19 +10,19 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login</title>
     <link rel="stylesheet" href="login.css">
-    <script src="tema.js" defer></script>
 </head>
 <body class="pagina-login">
 <main class="contenido-login">
 
-<button class="boton-tema-login" type="button" aria-pressed="false">Modo oscuro</button>
 <h2>Iniciar Sesión</h2>
 
+<!-- Muestra una sola vez el error devuelto por la validación. -->
 <?php if (isset($_SESSION['error_login'])) { ?>
     <p class="mensaje-error"><?php echo htmlspecialchars($_SESSION['error_login'], ENT_QUOTES, 'UTF-8'); ?></p>
     <?php unset($_SESSION['error_login']); ?>
 <?php } ?>
 
+<!-- Envía las credenciales al controlador de autenticación. -->
 <form action="validar_login.php" method="POST">
 
 <label>Usuario</label><br>

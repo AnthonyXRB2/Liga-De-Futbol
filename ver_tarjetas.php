@@ -1,4 +1,5 @@
 <?php
+// Redirige a la sección de sanciones manteniendo el torneo elegido.
 session_start();
 include('restringir_club.php');
 

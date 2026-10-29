@@ -1,4 +1,5 @@
 <?php
+// Protege el alta y carga los clubes disponibles para asignar el jugador.
 session_start();
 
 if (!isset($_SESSION["usuario"])) {
@@ -27,6 +28,7 @@ include("conexion.php");
 
 <h2>Agregar Jugador</h2>
 
+<!-- Recoge datos personales, deportivos y medidas opcionales. -->
 <form id="form-jugador" action="guardar_jugador.php" method="POST">
 
 <label>Nombre</label><br>
@@ -58,6 +60,7 @@ include("conexion.php");
 
 $clubes = mysqli_query($conn, "SELECT id, nombre FROM clubes WHERE activo = 1 ORDER BY nombre");
 
+// Solo se ofrecen clubes habilitados para recibir jugadores.
 while($club = mysqli_fetch_assoc($clubes)){
 ?>
 
@@ -94,6 +97,7 @@ while($club = mysqli_fetch_assoc($clubes)){
 </form>
 
 <script>
+// Actualiza la categoría preliminar y valida el año de nacimiento.
 const fechaNacimiento = document.getElementById("fecha_nacimiento");
 const categoriaPreview = document.getElementById("categoria_preview");
 
@@ -118,6 +122,7 @@ const cedula = document.getElementById("ci");
 const errorCedula = document.getElementById("ci_error");
 const camposFisicos = document.querySelectorAll("[data-decimal]");
 
+// Normaliza el nombre y exige el formato permitido por cada palabra.
 function validarNombre(mostrarErrorEspacioFinal = false) {
     const palabras = nombre.value.split(" ");
     const nombreInvalido = !/^\p{Lu}[\p{L}\p{M} ]*$/u.test(nombre.value)
@@ -180,6 +185,7 @@ function mostrarErrorCedula(mensaje) {
     errorCedula.hidden = mensaje === "";
 }
 
+// Comprueba el formato y la disponibilidad de la cédula en el servidor.
 async function validarCedulaUnica() {
     if (!/^[0-9]{8}$/.test(cedula.value)) {
         mostrarErrorCedula("La cédula debe contener exactamente 8 dígitos.");
@@ -219,6 +225,7 @@ cedula.addEventListener("input", () => {
 cedula.addEventListener("blur", validarCedulaUnica);
 
 function validarCampoFisico(campo) {
+    // Verifica el formato decimal y los rangos de las medidas.
     const error = document.getElementById(campo.name + "_error");
     const valor = campo.value;
     let mensaje = "";
@@ -244,6 +251,7 @@ function validarCampoFisico(campo) {
 }
 
 camposFisicos.forEach((campo) => {
+    // Limita la entrada progresivamente mientras se escribe cada medida.
     campo.addEventListener("input", () => {
         const reglas = {
             altura: { primerDigito: /^[12]$/, digitosEnteros: 1, decimales: 2 },
@@ -286,6 +294,7 @@ camposFisicos.forEach((campo) => {
 });
 
 formularioJugador.addEventListener("submit", async (evento) => {
+    // Repite las validaciones antes del envío para proteger el alta.
     validarNombre(true);
     camposFisicos.forEach(validarCampoFisico);
 

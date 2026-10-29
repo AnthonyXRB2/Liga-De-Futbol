@@ -1,4 +1,5 @@
 <?php
+// Prepara los datos de sesión que se muestran en la navegación.
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -21,6 +22,7 @@ $rolVisible = htmlspecialchars($rol, ENT_QUOTES, 'UTF-8');
         </div>
     </header>
 
+    <!-- Las opciones visibles dependen de si la cuenta es club o administrador. -->
     <nav class="navegacion-principal" aria-label="Navegación principal">
         <?php if ($rol === 'club') { ?>
             <a href="index.php">Inicio</a>
@@ -59,11 +61,11 @@ $rolVisible = htmlspecialchars($rol, ENT_QUOTES, 'UTF-8');
             </details>
         <?php } ?>
     </nav>
-    <button class="boton-tema" type="button" aria-pressed="false">Modo oscuro</button>
     <a class="cerrar-sesion" href="logout.php">Cerrar sesión</a>
 </aside>
 
 <script>
+    // Abre y cierra el panel lateral con el botón, el fondo o Escape.
     (function () {
         var boton = document.querySelector('.boton-menu');
         var fondo = document.querySelector('.fondo-sidebar');
@@ -89,4 +91,3 @@ $rolVisible = htmlspecialchars($rol, ENT_QUOTES, 'UTF-8');
         });
     }());
 </script>
-<script src="tema.js"></script>

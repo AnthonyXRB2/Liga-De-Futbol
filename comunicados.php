@@ -1,4 +1,5 @@
 <?php
+// Carga los avisos y determina si se muestran controles de administración.
 session_start();
 include('restringir_club.php');
 
@@ -24,6 +25,7 @@ $esAdmin = ($_SESSION['rol'] ?? '') === 'admin';
 <?php include('menu.php'); ?>
 
 <section class="seccion-comunicados" aria-labelledby="titulo-comunicados">
+    <!-- Lista las publicaciones y sus mensajes de resultado. -->
     <h2 id="titulo-comunicados">Comunicados</h2>
 
     <?php if (isset($_GET['creado'])) { ?>

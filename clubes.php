@@ -1,4 +1,5 @@
 <?php
+// Carga los clubes y muestra herramientas de edición solo a administradores.
 session_start();
 include('restringir_club.php');
 
@@ -24,6 +25,7 @@ require_once("conexion.php");
 
 <h2>Lista de Clubes</h2>
 
+<!-- Incluye búsqueda, estado actual y acciones administrativas. -->
 <div class="contenedor">
 
 <?php if($esAdmin){ ?>
@@ -59,6 +61,7 @@ require_once("conexion.php");
 
 $consulta = mysqli_query($conn, "SELECT * FROM clubes ORDER BY nombre");
 
+// Presenta cada club y sus controles según el rol activo.
 while($club = mysqli_fetch_assoc($consulta)){
 ?>
 
@@ -119,6 +122,7 @@ while($club = mysqli_fetch_assoc($consulta)){
 </div>
 
 <script>
+// Filtra las filas por nombre sin recargar la lista.
 const buscadorClub = document.getElementById("buscar-club");
 const filasClubes = Array.from(document.querySelectorAll(".fila-club"));
 const resultadoBusqueda = document.getElementById("resultado-busqueda");

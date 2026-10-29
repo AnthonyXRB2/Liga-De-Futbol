@@ -1,4 +1,5 @@
 <?php
+// Limita la eliminación a administradores y valida el jugador seleccionado.
 session_start();
 
 if (!isset($_SESSION["usuario"])) {
@@ -27,6 +28,7 @@ if ($jugadorId === false || $jugadorId === null) {
 
 include("conexion.php");
 
+// Elimina dependencias y jugador en una sola transacción.
 mysqli_begin_transaction($conn);
 
 try {

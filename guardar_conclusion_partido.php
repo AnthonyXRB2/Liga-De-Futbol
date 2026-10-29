@@ -1,4 +1,5 @@
 <?php
+// Valida el rol, el método y los datos de resultado o suspensión.
 session_start();
 
 if (!isset($_SESSION["usuario"])) {
@@ -42,6 +43,7 @@ if ($estado === "Suspendido") {
     $motivoSuspension = null;
 }
 
+// Actualiza el marcador de un partido jugado o su motivo de suspensión.
 if ($estado === "Jugado") {
     $consulta = mysqli_prepare(
         $conn,

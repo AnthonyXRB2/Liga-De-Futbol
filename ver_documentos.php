@@ -1,4 +1,5 @@
 <?php
+// Carga los documentos visibles para el rol y club de la sesión.
 session_start();
 include("restringir_club.php");
 
@@ -60,6 +61,7 @@ $consulta=mysqli_query($conn,$sql);
 
 <h2>Documentos de los Jugadores</h2>
 
+<!-- Presenta fichas, carnés y fechas de carga en una tabla. -->
 <div class="contenedor">
 
 <table>
