@@ -39,8 +39,14 @@ include("conexion.php");
 <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" min="2013-01-01" max="2019-12-31" aria-describedby="fecha_error" required>
 <span id="fecha_error" class="ayuda-fecha" role="alert" hidden></span><br><br>
 
-<label>Categoría calculada</label><br>
-<input type="text" id="categoria_preview" readonly><br><br>
+<label for="categoria">Categoría</label><br>
+<select id="categoria" name="categoria" required>
+    <option value="" selected disabled>Selecciona una fecha de nacimiento</option>
+    <?php for ($anioCategoria = 2013; $anioCategoria <= 2019; $anioCategoria++) { ?>
+        <option value="<?php echo $anioCategoria; ?>"><?php echo $anioCategoria; ?></option>
+    <?php } ?>
+    <option value="Femenina">Femenina</option>
+</select><br><br>
 
 <label>Posición</label><br>
 <select name="posicion" required>
@@ -99,7 +105,7 @@ while($club = mysqli_fetch_assoc($clubes)){
 <script>
 // Actualiza la categoría preliminar y valida el año de nacimiento.
 const fechaNacimiento = document.getElementById("fecha_nacimiento");
-const categoriaPreview = document.getElementById("categoria_preview");
+const categoriaSelect = document.getElementById("categoria");
 
 function validarFechaNacimiento() {
     const anio = Number(fechaNacimiento.value.slice(0, 4));
@@ -109,7 +115,9 @@ function validarFechaNacimiento() {
     fechaNacimiento.setCustomValidity(fechaInvalida ? mensaje : "");
     document.getElementById("fecha_error").textContent = fechaInvalida ? mensaje : "";
     document.getElementById("fecha_error").hidden = !fechaInvalida;
-    categoriaPreview.value = fechaNacimiento.value && !fechaInvalida ? String(anio) : "";
+    if (categoriaSelect.value !== "Femenina") {
+        categoriaSelect.value = fechaNacimiento.value && !fechaInvalida ? String(anio) : "";
+    }
 }
 
 fechaNacimiento.addEventListener("input", validarFechaNacimiento);

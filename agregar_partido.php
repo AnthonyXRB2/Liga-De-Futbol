@@ -24,7 +24,7 @@ $claveTorneo = is_string($claveSolicitada) && isset($torneos[$claveSolicitada])
     ? $claveSolicitada
     : "estandar";
 $categoriaSeleccionada = $torneos[$claveTorneo];
-$categoriasEdad = range(2012, 2019);
+$categoriasEdad = array_merge(array_map("strval", range(2012, 2019)), ["Femenina"]);
 ?>
 
 <!DOCTYPE html>
@@ -85,7 +85,8 @@ while($club2 = mysqli_fetch_assoc($clubes2)){
 <br><br>
 
 <label>Fecha</label><br>
-<input type="date" id="fecha" name="fecha" min="<?php echo date("Y-m-d"); ?>"
+<input type="date" id="fecha" name="fecha" min="<?php echo date("Y"); ?>-01-01"
+       max="<?php echo date("Y"); ?>-12-31"
        aria-describedby="fecha-error" required>
 <small id="fecha-error" class="ayuda-fecha" hidden></small>
 
@@ -122,11 +123,13 @@ const errorFecha = document.getElementById("fecha-error");
 const horaPartido = document.getElementById("hora");
 const errorHora = document.getElementById("hora-error");
 const formularioPartido = horaPartido.form;
-const mensajeFecha = "No se puede registrar un partido con una fecha anterior al día actual.";
+const anioActual = "<?php echo date("Y"); ?>";
+const mensajeFecha = "La fecha del partido debe pertenecer al año actual (" + anioActual + ").";
 const formatoHoraValido = /^(?:[1-9]|1[0-2]):[0-5][0-9](?:Am|Pm)$/;
 
 function validarFechaPartido(mostrarMensaje = false) {
-    const fechaInvalida = fechaPartido.value && fechaPartido.value < fechaPartido.min;
+    const fechaInvalida = fechaPartido.value &&
+        (fechaPartido.value < fechaPartido.min || fechaPartido.value > fechaPartido.max);
     const fechaIncompleta = mostrarMensaje && !fechaPartido.value;
     const mensaje = fechaInvalida
         ? mensajeFecha

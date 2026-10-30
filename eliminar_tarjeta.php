@@ -25,7 +25,7 @@ $sancionId = filter_input(INPUT_POST, 'sancion_id', FILTER_VALIDATE_INT, [
 ]);
 $torneo = $_POST['torneo'] ?? 'estandar';
 $torneosPermitidos = ['estandar', 'plata', 'oro'];
-$categoriasEdad = array_map('strval', range(2012, 2019));
+$categoriasEdad = array_merge(array_map('strval', range(2012, 2019)), ['Femenina']);
 $categoriaPartidos = $_POST['categoria_partidos'] ?? '';
 $clubSancion = $_POST['club_sancion'] ?? '';
 $categoriaSancion = $_POST['categoria_sancion'] ?? '';

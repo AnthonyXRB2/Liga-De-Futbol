@@ -24,10 +24,11 @@ $partidoId = filter_input(INPUT_POST, 'partido_id', FILTER_VALIDATE_INT);
 $categoriaEdad = $_POST['categoria_edad'] ?? null;
 $tipo = $_POST['tipo'] ?? null;
 $motivo = $_POST['motivo'] ?? '';
+$categoriasEdadPermitidas = array_merge(array_map('strval', range(2012, 2019)), ['Femenina']);
 
 if ($jugadorId === false || $jugadorId === null || $jugadorId < 1 ||
     $partidoId === false || $partidoId === null || $partidoId < 1 ||
-    !is_string($categoriaEdad) || preg_match('/\A201[2-9]\z/D', $categoriaEdad) !== 1 ||
+    !is_string($categoriaEdad) || !in_array($categoriaEdad, $categoriasEdadPermitidas, true) ||
     !is_string($tipo) || !is_string($motivo) ||
     !in_array($tipo, ['Amarilla', 'Roja'], true) ||
     preg_match('/\A.{0,255}\z/us', trim($motivo)) !== 1) {

@@ -21,9 +21,12 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 }
 
 $nombre = trim($_POST["nombre"] ?? "");
-$datosNacimiento = calcular_datos_nacimiento($_POST["fecha_nacimiento"] ?? "");
+$datosNacimiento = calcular_datos_nacimiento(
+    $_POST["fecha_nacimiento"] ?? "",
+    $_POST["categoria"] ?? null
+);
 if ($datosNacimiento === false) {
-    die("La fecha de nacimiento debe ser válida y estar entre el 1 de enero de 2013 y el 31 de diciembre de 2019.");
+    die("La fecha debe ser válida y estar entre 2013 y 2019; la categoría debe coincidir con el año o ser Femenina.");
 }
 $edad = $datosNacimiento["edad"];
 $posicion = trim($_POST["posicion"] ?? "");

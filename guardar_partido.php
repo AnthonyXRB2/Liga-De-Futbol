@@ -20,20 +20,21 @@ $horaEntrada = $_POST["hora"] ?? "";
 $categoria = $_POST["categoria"] ?? "";
 $categoriaEdad = $_POST["categoria_edad"] ?? "";
 $categoriasPermitidas = ["Estándar", "Copa Plata", "Copa Oro"];
+$categoriasEdadPermitidas = array_merge(array_map("strval", range(2012, 2019)), ["Femenina"]);
 
 $fechaValida = is_string($fecha) &&
     preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha) &&
     checkdate((int) substr($fecha, 5, 2), (int) substr($fecha, 8, 2), (int) substr($fecha, 0, 4)) &&
-    $fecha >= date("Y-m-d");
+    substr($fecha, 0, 4) === date("Y");
 $horaValida = is_string($horaEntrada) &&
     preg_match('/^([1-9]|1[0-2]):([0-5][0-9])(A|P)m$/', trim($horaEntrada), $partesHora);
 $categoriaEdadValida = is_string($categoriaEdad) &&
-    preg_match('/\A201[2-9]\z/D', $categoriaEdad) === 1;
+    in_array($categoriaEdad, $categoriasEdadPermitidas, true);
 
-// Verifica fechas futuras, formato horario y valores de competencia válidos.
+// Verifica el año de la fecha, el formato horario y los valores válidos.
 if (!$fechaValida) {
     http_response_code(400);
-    die("No se puede registrar un partido con una fecha anterior al día actual o una fecha inválida.");
+    die("La fecha del partido debe pertenecer al año actual y ser válida.");
 }
 
 if ($local === false || $visitante === false || $local === null || $visitante === null ||

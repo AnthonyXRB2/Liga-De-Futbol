@@ -15,10 +15,10 @@ if (!isset($torneos[$claveTorneo])) {
     $claveTorneo = 'estandar';
 }
 $torneo = $torneos[$claveTorneo];
-$categoriasEdad = array_map('strval', range(2012, 2019));
+$categorias = array_merge(array_map('strval', range(2012, 2019)), ['Femenina']);
 $categoriaPartidosSolicitada = $_GET['categoria_partidos'] ?? '';
 $filtroCategoriaPartidos = is_string($categoriaPartidosSolicitada) &&
-    in_array($categoriaPartidosSolicitada, $categoriasEdad, true)
+    in_array($categoriaPartidosSolicitada, $categorias, true)
         ? $categoriaPartidosSolicitada
         : '';
 $clubSolicitado = $_GET['club_sancion'] ?? '';
@@ -27,7 +27,7 @@ $filtroClubSanciones = is_string($clubSolicitado) && ctype_digit($clubSolicitado
     : 0;
 $categoriaSancionesSolicitada = $_GET['categoria_sancion'] ?? '';
 $filtroCategoriaSanciones = is_string($categoriaSancionesSolicitada) &&
-    in_array($categoriaSancionesSolicitada, $categoriasEdad, true)
+    in_array($categoriaSancionesSolicitada, $categorias, true)
         ? $categoriaSancionesSolicitada
         : '';
 
@@ -271,7 +271,7 @@ function escapar($valor)
                 <label for="categoria-partidos">Categoría de los partidos</label>
                 <select id="categoria-partidos" name="categoria_partidos">
                     <option value="">Todas las categorías</option>
-                    <?php foreach ($categoriasEdad as $categoriaEdad) { ?>
+                    <?php foreach ($categorias as $categoriaEdad) { ?>
                         <option value="<?php echo escapar($categoriaEdad); ?>"
                             <?php echo $categoriaEdad === $filtroCategoriaPartidos ? 'selected' : ''; ?>>
                             <?php echo escapar($categoriaEdad); ?>
@@ -377,7 +377,7 @@ function escapar($valor)
                 <label for="categoria-sanciones">Categoría del jugador</label>
                 <select id="categoria-sanciones" name="categoria_sancion">
                     <option value="">Todas las categorías</option>
-                    <?php foreach ($categoriasEdad as $categoriaEdad) { ?>
+                    <?php foreach ($categorias as $categoriaEdad) { ?>
                         <option value="<?php echo escapar($categoriaEdad); ?>"
                             <?php echo $categoriaEdad === $filtroCategoriaSanciones ? 'selected' : ''; ?>>
                             <?php echo escapar($categoriaEdad); ?>

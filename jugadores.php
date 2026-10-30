@@ -137,6 +137,7 @@ function h($valor)
                             <?php echo $opcionCategoria; ?>
                         </option>
                     <?php } ?>
+                    <option value="Femenina" <?php echo $categoria === "Femenina" ? "selected" : ""; ?>>Femenina</option>
                 </select>
             </div>
         </div>

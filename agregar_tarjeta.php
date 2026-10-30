@@ -14,7 +14,7 @@ $torneos = [
     'plata' => 'Copa Plata',
     'oro' => 'Copa Oro'
 ];
-$categoriasEdad = range(2012, 2019);
+$categoriasEdad = array_merge(array_map('strval', range(2012, 2019)), ['Femenina']);
 $claveSolicitada = $_GET['torneo'] ?? 'estandar';
 $claveTorneo = is_string($claveSolicitada) && isset($torneos[$claveSolicitada])
     ? $claveSolicitada
