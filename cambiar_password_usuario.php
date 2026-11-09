@@ -62,7 +62,7 @@ if(isset($_POST["guardar"])){
 <h2>Cambiar Contraseña</h2>
 
 <!-- Identifica la cuenta objetivo antes de capturar la nueva clave. -->
-<p><b>Usuario:</b> <?php echo $usuarioSeleccionado["usuario"]; ?></p>
+<p><b>Usuario:</b> <?php echo htmlspecialchars($usuarioSeleccionado["usuario"], ENT_QUOTES, "UTF-8"); ?></p>
 
 <form method="POST">
 

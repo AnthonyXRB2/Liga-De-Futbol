@@ -30,7 +30,7 @@ if ($titulo !== "" && $mensaje !== "") {
         $sentencia = mysqli_prepare($conn, 'UPDATE comunicados SET titulo = ?, mensaje = ? WHERE id = ?');
         mysqli_stmt_bind_param($sentencia, 'ssi', $titulo, $mensaje, $id);
     } else {
-        $sentencia = mysqli_prepare($conn, 'INSERT INTO comunicados (titulo, mensaje) VALUES (?, ?)');
+        $sentencia = mysqli_prepare($conn, 'INSERT INTO comunicados (titulo, mensaje, fecha_publicacion) VALUES (?, ?, CURRENT_TIMESTAMP)');
         mysqli_stmt_bind_param($sentencia, 'ss', $titulo, $mensaje);
     }
     mysqli_stmt_execute($sentencia);

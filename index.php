@@ -13,7 +13,7 @@ require_once('conexion.php');
 $rol = $_SESSION['rol'] ?? '';
 $consultaComunicados = mysqli_query(
     $conn,
-    'SELECT titulo, mensaje FROM comunicados ORDER BY id DESC LIMIT 5'
+    'SELECT titulo, mensaje, fecha_publicacion FROM comunicados ORDER BY fecha_publicacion DESC, id DESC LIMIT 5'
 );
 
 // Cuenta los registros principales únicamente para el panel administrativo.
@@ -75,6 +75,11 @@ if ($rol === 'admin') {
                 <?php while ($comunicado = mysqli_fetch_assoc($consultaComunicados)) { ?>
                     <article class="comunicado">
                         <h3><?php echo htmlspecialchars($comunicado['titulo'], ENT_QUOTES, 'UTF-8'); ?></h3>
+                        <?php if ($comunicado['fecha_publicacion'] !== null) { ?>
+                            <p class="fecha-comunicado">Publicado el <time datetime="<?php echo htmlspecialchars($comunicado['fecha_publicacion'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo date('d/m/Y H:i', strtotime($comunicado['fecha_publicacion'])); ?></time></p>
+                        <?php } else { ?>
+                            <p class="fecha-comunicado">Fecha de publicaci&oacute;n no registrada.</p>
+                        <?php } ?>
                         <p><?php echo nl2br(htmlspecialchars($comunicado['mensaje'], ENT_QUOTES, 'UTF-8')); ?></p>
                     </article>
                 <?php } ?>

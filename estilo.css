@@ -535,6 +535,13 @@ tr:last-child td { border-bottom: 0; }
 
 /* Tarjetas informativas y mensajes publicados en el sitio. */
 .seccion-comunicados { width: min(950px, 100%); margin: 24px auto; }
+.filtro-comunicados { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; margin: 16px 0 22px; padding: 16px; border: 1px solid var(--borde); border-radius: 12px; background: var(--superficie); }
+.filtro-comunicados > div { display: grid; gap: 5px; }
+.filtro-comunicados label { color: #c3d0d3; font-weight: 650; }
+.filtro-comunicados input { min-height: 40px; padding: 7px 10px; border: 1px solid var(--borde); border-radius: 7px; color: var(--tinta); background: #101820; font: inherit; }
+.filtro-comunicados button, .boton-limpiar-filtro { min-height: 40px; padding: 8px 14px; border: 0; border-radius: 7px; color: #fff; background: var(--azul); font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
+.boton-limpiar-filtro { display: inline-flex; align-items: center; }
+.filtro-comunicados button:hover, .boton-limpiar-filtro:hover { color: #fff; background: #4b8176; }
 .lista-comunicados { display: grid; gap: 14px; }
 .comunicado {
     padding: 20px;
@@ -546,6 +553,7 @@ tr:last-child td { border-bottom: 0; }
 }
 .comunicado h3 { margin: 0 0 8px; color: #c3d0d3; }
 .comunicado p { margin: 8px 0; text-align: left; }
+.comunicado .fecha-comunicado { color: #aab9bd; font-size: .88rem; }
 .acciones-comunicados { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; margin: 14px 0 0; }
 .acciones-comunicados a { text-decoration: none; }
 .sin-comunicados { text-align: left; }

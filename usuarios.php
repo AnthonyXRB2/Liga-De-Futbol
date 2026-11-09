@@ -71,7 +71,7 @@ while($fila=mysqli_fetch_assoc($consulta)){
 
 <tr>
 
-<td><?php echo $fila["usuario"]; ?></td>
+<td><?php echo htmlspecialchars($fila["usuario"], ENT_QUOTES, "UTF-8"); ?></td>
 
 <td><?php echo ucfirst($fila["rol"]); ?></td>
 
@@ -91,9 +91,19 @@ if($fila["club"]!=""){
 
 <td>
 
+<?php if ($fila["rol"] !== "admin") { ?>
+<a href="editar_usuario.php?id=<?php echo (int) $fila["id"]; ?>">
+
+<button type="button">
+📝 Editar
+</button>
+
+</a>
+<?php } ?>
+
 <a href="cambiar_password_usuario.php?id=<?php echo $fila["id"]; ?>">
 
-<button>
+<button type="button">
 🔒 Contraseña
 </button>
 
@@ -104,7 +114,7 @@ if($fila["club"]!=""){
 <a href="eliminar_usuario.php?id=<?php echo $fila["id"]; ?>"
 onclick="return confirm('¿Eliminar este usuario?');">
 
-<button>
+<button type="button">
 🗑 Eliminar
 </button>
 
