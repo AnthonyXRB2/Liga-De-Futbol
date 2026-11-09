@@ -24,7 +24,7 @@ include("conexion.php");
 </head>
 <body>
 
-<?php include("menu.php"); ?
+<?php include("menu.php"); ?>
 
 <h2>Agregar Jugador</h2>
 
