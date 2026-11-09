@@ -19,29 +19,52 @@ body {
 
 body {
     display: grid;
+    position: relative;
     min-height: 100vh;
     place-items: center;
     margin: 0;
     padding: 24px;
     color: var(--tinta);
     cursor: default;
-    background: var(--fondo);
+    background:
+        radial-gradient(ellipse at 50% 45%, rgba(59, 109, 100, .2), transparent 58%),
+        linear-gradient(145deg, #14221f, var(--fondo) 58%);
     font: 16px/1.5 "Segoe UI", Arial, sans-serif;
 }
 
-.contenido-login { width: min(460px, 100%); }
+.pagina-login::before {
+    position: fixed;
+    inset: 24px;
+    border: 1px solid rgba(127, 174, 156, .2);
+    border-radius: 18px;
+    background:
+        linear-gradient(90deg, transparent calc(50% - .5px), rgba(127, 174, 156, .15) calc(50% - .5px), rgba(127, 174, 156, .15) calc(50% + .5px), transparent calc(50% + .5px)),
+        radial-gradient(circle at center, transparent 0 88px, rgba(127, 174, 156, .15) 89px 90px, transparent 91px);
+    content: "";
+    pointer-events: none;
+}
+
+.contenido-login { position: relative; z-index: 1; width: min(460px, 100%); }
+.logo-login {
+    display: block;
+    width: 220px;
+    height: 180px;
+    margin: 0 auto 8px;
+    border-radius: 6px;
+    object-fit: cover;
+    object-position: center 72%;
+}
 .contenido-login h2 {
-    margin: 0 0 20px;
+    margin: 0 0 18px;
     color: #fff;
-    font-size: clamp(1.7rem, 5vw, 2.1rem);
+    font-size: clamp(1.5rem, 5vw, 1.8rem);
     text-align: center;
 }
-.contenido-login h2::before { content: "⚽ "; color: var(--balon); }
 
 /* Presenta el formulario de acceso con campos y acción principal. */
 form {
     margin: 0;
-    padding: 28px;
+    padding: 24px;
     border: 1px solid rgba(180, 205, 200, .22);
     border-radius: 16px;
     background: var(--superficie);

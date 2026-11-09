@@ -14,6 +14,10 @@ session_start();
 <body class="pagina-login">
 <main class="contenido-login">
 
+<!-- Envía las credenciales al controlador de autenticación. -->
+<form action="validar_login.php" method="POST">
+
+<img class="logo-login" src="logo.png" alt="Logo de Omni Tech">
 <h2>Iniciar Sesión</h2>
 
 <!-- Muestra una sola vez el error devuelto por la validación. -->
@@ -21,9 +25,6 @@ session_start();
     <p class="mensaje-error"><?php echo htmlspecialchars($_SESSION['error_login'], ENT_QUOTES, 'UTF-8'); ?></p>
     <?php unset($_SESSION['error_login']); ?>
 <?php } ?>
-
-<!-- Envía las credenciales al controlador de autenticación. -->
-<form action="validar_login.php" method="POST">
 
 <label>Usuario</label><br>
 <input type="text" name="usuario">

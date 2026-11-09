@@ -27,10 +27,10 @@ $rolVisible = htmlspecialchars($rol, ENT_QUOTES, 'UTF-8');
         <?php if ($rol === 'club') { ?>
             <a href="index.php">Inicio</a>
             <a href="jugadores.php">Jugadores</a>
-            <a href="tabla_posiciones.php">Competencia y sanciones</a>
-            <a href="ver_documentos.php">Documentos del club</a>
+            <a href="tabla_posiciones.php">Competencia y Sanciones</a>
+            <a href="ver_documentos.php">Documentos Del Club</a>
             <a href="comunicados.php">Comunicados</a>
-            <a href="subir_documentos.php">Subir ficha médica</a>
+            <a href="subir_documentos.php">Subir Ficha Médica</a>
         <?php } else { ?>
             <a href="index.php">Inicio</a>
 
@@ -39,7 +39,7 @@ $rolVisible = htmlspecialchars($rol, ENT_QUOTES, 'UTF-8');
             <div class="opciones-menu">
                 <a href="clubes.php">Clubes</a>
                 <a href="jugadores.php">Jugadores</a>
-                <a href="tabla_posiciones.php">Competencia y sanciones</a>
+                <a href="tabla_posiciones.php">Competencia y Sanciones</a>
             </div>
             </details>
 
@@ -61,7 +61,7 @@ $rolVisible = htmlspecialchars($rol, ENT_QUOTES, 'UTF-8');
             </details>
         <?php } ?>
     </nav>
-    <a class="cerrar-sesion" href="logout.php">Cerrar sesión</a>
+    <a class="cerrar-sesion" href="logout.php">Cerrar Sesión</a>
 </aside>
 
 <script>
