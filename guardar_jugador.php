@@ -1,0 +1,123 @@
+<?php
+
+// Carga los servicios requeridos y restringe el alta al administrador.
+include("conexion.php");
+include("datos_jugador.php");
+
+session_start();
+
+if(!isset($_SESSION["usuario"])){
+    header("Location: login.php");
+    exit();
+}
+
+if (($_SESSION["rol"] ?? "") !== "admin") {
+    die("Acceso denegado.");
+}
+
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    header("Location: jugadores.php");
+    exit();
+}
+
+$nombre = trim($_POST["nombre"] ?? "");
+$datosNacimiento = calcular_datos_nacimiento(
+    $_POST["fecha_nacimiento"] ?? "",
+    $_POST["categoria"] ?? null
+);
+if ($datosNacimiento === false) {
+    die("La fecha debe ser válida y estar entre 2013 y 2019; la categoría debe coincidir con el año o ser Femenina.");
+}
+$edad = $datosNacimiento["edad"];
+$posicion = trim($_POST["posicion"] ?? "");
+$club_id = (int) ($_POST["club_id"] ?? 0);
+$ci = trim($_POST["ci"] ?? "");
+$categoria = $datosNacimiento["categoria"];
+$alturaIngresada = trim($_POST["altura"] ?? "");
+$masaIngresada = trim($_POST["masa"] ?? "");
+$velocidadIngresada = trim($_POST["velocidad"] ?? "");
+$altura = (float) str_replace(",", ".", $alturaIngresada);
+$masa = (float) str_replace(",", ".", $masaIngresada);
+$fuerza_peso = $masa * 9.8;
+$velocidad = (float) str_replace(",", ".", $velocidadIngresada);
+
+// Comprueba los campos obligatorios y el formato de la cédula.
+if ($nombre === "" || $posicion === "" || $ci === "" || $club_id <= 0) {
+    die("Completa todos los datos obligatorios del jugador.");
+}
+
+if (!preg_match('/^[0-9]{8}$/D', $ci)) {
+    die("La cédula debe contener exactamente 8 dígitos.");
+}
+
+if (!validar_cedula_uruguaya($ci)) {
+    die("La Cedula No Es Valida");
+}
+
+if (preg_match('/^(?:([0-9])\1{7}|01234567|12345678|23456789|98765432|87654321|76543210)$/D', $ci)) {
+    die("La cédula no puede repetir el mismo dígito ni ser una secuencia consecutiva.");
+}
+
+$palabrasNombre = explode(" ", $nombre);
+$nombreInvalido = !preg_match('/^\p{Lu}[\p{L}\p{M} ]*$/uD', $nombre)
+    || count($palabrasNombre) > 4;
+foreach ($palabrasNombre as $palabraNombre) {
+    $cantidadLetras = preg_match_all('/\p{L}/u', $palabraNombre);
+    if (!preg_match('/^\p{Lu}[\p{Ll}\p{M}]*$/uD', $palabraNombre) || $cantidadLetras < 3 || $cantidadLetras > 10) {
+        $nombreInvalido = true;
+        break;
+    }
+}
+if ($nombreInvalido) {
+    die("Cada palabra debe tener entre 3 y 10 letras. El nombre debe comenzar con mayúscula y usar de 1 a 3 espacios entre palabras.");
+}
+
+$limitesFisicos = [
+    "altura" => [$alturaIngresada, '/^(?:1,[0-9]{1,2}|2,(?:0[0-9]?|10?))$/D', 1, 2.1, "La altura debe estar entre 1,00 y 2,10 metros."],
+    "masa" => [$masaIngresada, '/^(?:1[5-9]|[2-8][0-9]|9[0-5]),[0-9]$/D', 15, 95.9, "El peso debe estar entre 15,0 y 95,9 kg."],
+    "velocidad" => [$velocidadIngresada, '/^[1-9],[0-9]$/D', 1, 9.9, "La velocidad debe estar entre 1,0 y 9,9 m/s."],
+];
+// Valida las medidas opcionales antes de guardarlas como valores numéricos.
+foreach ($limitesFisicos as [$valorIngresado, $formato, $minimo, $maximo, $mensajeError]) {
+    if ($valorIngresado === "") {
+        continue;
+    }
+    if (!preg_match($formato, $valorIngresado)) {
+        die("Los datos físicos no tienen el formato permitido. Usa la coma decimal y respeta los dígitos indicados.");
+    }
+    $valorNumerico = (float) str_replace(",", ".", $valorIngresado);
+    if ($valorNumerico < $minimo || $valorNumerico > $maximo) {
+        die($mensajeError);
+    }
+}
+
+$buscarCedula = mysqli_prepare($conn, "SELECT id FROM jugadores WHERE ci = ? LIMIT 1");
+// Evita registrar una cédula repetida y exige un club activo.
+mysqli_stmt_bind_param($buscarCedula, "s", $ci);
+mysqli_stmt_execute($buscarCedula);
+mysqli_stmt_store_result($buscarCedula);
+$cedulaDuplicada = mysqli_stmt_num_rows($buscarCedula) > 0;
+mysqli_stmt_close($buscarCedula);
+if ($cedulaDuplicada) {
+    die("Esta cédula ya está registrada.");
+}
+
+$club = mysqli_prepare($conn, "SELECT id FROM clubes WHERE id = ? AND activo = 1");
+mysqli_stmt_bind_param($club, "i", $club_id);
+mysqli_stmt_execute($club);
+mysqli_stmt_store_result($club);
+$clubActivo = mysqli_stmt_num_rows($club) === 1;
+mysqli_stmt_close($club);
+if (!$clubActivo) {
+    die("Selecciona un club activo.");
+}
+
+$consulta = mysqli_prepare($conn, "INSERT INTO jugadores (nombre, edad, posicion, club_id, ci, categoria, altura, masa, fuerza_peso, velocidad) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+// Persiste el perfil validado y redirige al listado.
+mysqli_stmt_bind_param($consulta, "sisissdddd", $nombre, $edad, $posicion, $club_id, $ci, $categoria, $altura, $masa, $fuerza_peso, $velocidad);
+mysqli_stmt_execute($consulta);
+mysqli_stmt_close($consulta);
+
+header("Location: jugadores.php");
+
+?>

@@ -1,0 +1,101 @@
+/* Colores y reglas base de la pantalla de autenticación. */
+:root {
+    --azul: #3b6d64;
+    --azul-oscuro: #101c27;
+    --balon: #7fae9c;
+    --tinta: #d0d9dc;
+    --fondo: #101820;
+    --superficie: #1d2a32;
+    --borde: #45545d;
+    --sombra: 0 16px 38px rgba(0, 0, 0, .4);
+}
+
+* { box-sizing: border-box; }
+
+body {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+body {
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    margin: 0;
+    padding: 24px;
+    color: var(--tinta);
+    cursor: default;
+    background: var(--fondo);
+    font: 16px/1.5 "Segoe UI", Arial, sans-serif;
+}
+
+.contenido-login { width: min(460px, 100%); }
+.contenido-login h2 {
+    margin: 0 0 20px;
+    color: #fff;
+    font-size: clamp(1.7rem, 5vw, 2.1rem);
+    text-align: center;
+}
+.contenido-login h2::before { content: "⚽ "; color: var(--balon); }
+
+/* Presenta el formulario de acceso con campos y acción principal. */
+form {
+    margin: 0;
+    padding: 28px;
+    border: 1px solid rgba(180, 205, 200, .22);
+    border-radius: 16px;
+    background: var(--superficie);
+    box-shadow: var(--sombra);
+}
+
+label { display: block; margin-bottom: 5px; color: #c3d0d3; font-weight: 700; }
+input {
+    width: 100%;
+    min-height: 46px;
+    margin: 0 0 18px;
+    padding: 10px 12px;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    color: var(--tinta);
+    background: #16232b;
+    cursor: text;
+    font: inherit;
+    -webkit-user-select: text;
+    user-select: text;
+}
+input:focus { outline: 3px solid rgba(127, 174, 156, .28); border-color: var(--balon); }
+
+button {
+    display: flex;
+    width: 100%;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 9px;
+    color: #fff;
+    background: var(--azul);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 750;
+}
+button:hover { background: var(--azul-oscuro); }
+
+/* Destaca los avisos devueltos tras un intento de acceso. */
+.mensaje-error {
+    margin: 0 0 16px;
+    padding: 12px 16px;
+    border-radius: 9px;
+    color: #e6a8ad;
+    background: #40272c;
+    text-align: center;
+}
+
+:focus-visible { outline: 3px solid var(--balon); outline-offset: 2px; }
+
+/* Ajusta márgenes y relleno para pantallas angostas. */
+@media (max-width: 480px) {
+    body { padding: 18px; }
+    form { padding: 22px; }
+}
