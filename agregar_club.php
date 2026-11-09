@@ -7,7 +7,7 @@ if (!isset($_SESSION["usuario"])) {
     exit();
 }
 
-if ($_SESSION["rol"] != "admin") 
+if ($_SESSION["rol"] != "admin") {
     echo "<h2>Acceso denegado</h2>";
     exit();
 }
