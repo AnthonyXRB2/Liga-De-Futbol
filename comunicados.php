@@ -113,7 +113,7 @@ $esAdmin = ($_SESSION['rol'] ?? '') === 'admin';
         </div>
     <?php } elseif (!$errorFechas) { ?>
         <?php if ($fechaPublicacion !== '') { ?>
-            <p class="sin-comunicados">No hay comunicados para las fechas seleccionadas.</p>
+            <p class="sin-comunicados">No hay comunicados para la fecha seleccionada.</p>
         <?php } else { ?>
             <p class="sin-comunicados">No hay comunicados publicados por el momento.</p>
         <?php } ?>
