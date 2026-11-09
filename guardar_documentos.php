@@ -22,15 +22,17 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 
 $clubId = (int) ($_SESSION["club_id"] ?? 0);
 $jugadorId = (int) ($_POST["jugador_id"] ?? 0);
+$categoria = $_POST["categoria"] ?? "";
+$categoriasPermitidas = array_merge(array_map("strval", range(2013, 2019)), ["Femenina"]);
 
 // Verifica que el jugador pertenezca al club de la sesión.
-if ($clubId <= 0 || $jugadorId <= 0) {
-    header("Location: subir_documentos.php?error=" . urlencode("Selecciona un jugador de tu club."));
+if ($clubId <= 0 || $jugadorId <= 0 || !is_string($categoria) || !in_array($categoria, $categoriasPermitidas, true)) {
+    header("Location: subir_documentos.php?error=" . urlencode("Selecciona una categoría y un jugador de tu club."));
     exit();
 }
 
-$jugadorStmt = mysqli_prepare($conn, "SELECT id FROM jugadores WHERE id = ? AND club_id = ?");
-mysqli_stmt_bind_param($jugadorStmt, "ii", $jugadorId, $clubId);
+$jugadorStmt = mysqli_prepare($conn, "SELECT id FROM jugadores WHERE id = ? AND club_id = ? AND categoria = ?");
+mysqli_stmt_bind_param($jugadorStmt, "iis", $jugadorId, $clubId, $categoria);
 mysqli_stmt_execute($jugadorStmt);
 mysqli_stmt_store_result($jugadorStmt);
 $jugadorExiste = mysqli_stmt_num_rows($jugadorStmt) === 1;

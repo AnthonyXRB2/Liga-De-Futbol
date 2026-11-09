@@ -22,17 +22,32 @@ $usuarioId = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT, [
     'options' => ['min_range' => 1],
 ]);
 $nombreUsuario = $_POST['usuario'] ?? null;
-if (!is_string($nombreUsuario)) {
-    http_response_code(400);
-    exit('Ingresa un nombre de usuario válido.');
-}
-$nombreUsuario = trim($nombreUsuario);
 
-if ($usuarioId === false || $usuarioId === null ||
-    $nombreUsuario === '' || strlen($nombreUsuario) > 50 ||
-    preg_match('/[\x00-\x1F\x7F]/', $nombreUsuario)) {
-    http_response_code(400);
-    exit('Ingresa un nombre de usuario válido.');
+$cantidadCaracteres = is_string($nombreUsuario)
+    ? preg_match_all('/./us', $nombreUsuario)
+    : false;
+$nombreValido = is_string($nombreUsuario)
+    && $cantidadCaracteres !== false
+    && $cantidadCaracteres <= 43
+    && preg_match('/\A\p{Lu}[\p{Ll}\p{M}]*(?: \p{Lu}[\p{Ll}\p{M}]*){0,3}\z/u', $nombreUsuario) === 1;
+if ($nombreValido) {
+    $palabras = explode(' ', $nombreUsuario);
+    foreach ($palabras as $palabra) {
+        $cantidadLetras = preg_match_all('/\p{L}/u', $palabra);
+        if ($cantidadLetras === false || $cantidadLetras < 4 || $cantidadLetras > 10) {
+            $nombreValido = false;
+            break;
+        }
+    }
+}
+
+if ($usuarioId === false || $usuarioId === null || !$nombreValido) {
+    if ($usuarioId === false || $usuarioId === null) {
+        http_response_code(400);
+        exit('Usuario no válido.');
+    }
+    header('Location: usuarios.php?edit=' . $usuarioId . '&error=nombre');
+    exit();
 }
 
 $actual = $conn->prepare('SELECT rol FROM usuarios WHERE id = ?');
@@ -71,90 +86,26 @@ if (!$duplicado->execute()) {
 $nombreDuplicado = $duplicado->get_result()->num_rows > 0;
 $duplicado->close();
 if ($nombreDuplicado) {
-    header('Location: editar_usuario.php?id=' . $usuarioId . '&error=duplicado');
+    header('Location: usuarios.php?edit=' . $usuarioId . '&error=duplicado');
     exit();
 }
 
-if ($usuarioActual['rol'] === 'club') {
-    $clubId = filter_input(INPUT_POST, 'club_id', FILTER_VALIDATE_INT, [
-        'options' => ['min_range' => 1],
-    ]);
-    if ($clubId === false || $clubId === null) {
-        header('Location: editar_usuario.php?id=' . $usuarioId . '&error=club');
-        exit();
-    }
-
-    $conn->begin_transaction();
-    $club = $conn->prepare('SELECT id FROM clubes WHERE id = ? AND activo = 1 FOR UPDATE');
-    if (!$club) {
-        $conn->rollback();
-        http_response_code(500);
-        exit('No se pudo validar el club.');
-    }
-    $club->bind_param('i', $clubId);
-    if (!$club->execute()) {
-        $club->close();
-        $conn->rollback();
-        http_response_code(500);
-        exit('No se pudo validar el club.');
-    }
-    $clubValido = $club->get_result()->num_rows === 1;
-    $club->close();
-
-    $ocupacion = $conn->prepare('SELECT id FROM usuarios WHERE club_id = ? AND id <> ? LIMIT 1');
-    if (!$ocupacion) {
-        $conn->rollback();
-        http_response_code(500);
-        exit('No se pudo validar la asignación del club.');
-    }
-    $ocupacion->bind_param('ii', $clubId, $usuarioId);
-    if (!$ocupacion->execute()) {
-        $ocupacion->close();
-        $conn->rollback();
-        http_response_code(500);
-        exit('No se pudo validar la asignación del club.');
-    }
-    $clubOcupado = $ocupacion->get_result()->num_rows > 0;
-    $ocupacion->close();
-
-    if (!$clubValido || $clubOcupado) {
-        $conn->rollback();
-        header('Location: editar_usuario.php?id=' . $usuarioId . '&error=club');
-        exit();
-    }
-
-    $actualizar = $conn->prepare('UPDATE usuarios SET usuario = ?, club_id = ? WHERE id = ?');
-    if (!$actualizar) {
-        $conn->rollback();
-        http_response_code(500);
-        exit('No se pudo actualizar el usuario.');
-    }
-    $actualizar->bind_param('sii', $nombreUsuario, $clubId, $usuarioId);
-} else {
-    $actualizar = $conn->prepare('UPDATE usuarios SET usuario = ? WHERE id = ?');
-    if (!$actualizar) {
-        http_response_code(500);
-        exit('No se pudo actualizar el usuario.');
-    }
-    $actualizar->bind_param('si', $nombreUsuario, $usuarioId);
+$actualizar = $conn->prepare('UPDATE usuarios SET usuario = ? WHERE id = ?');
+if (!$actualizar) {
+    http_response_code(500);
+    exit('No se pudo actualizar el usuario.');
 }
-
+$actualizar->bind_param('si', $nombreUsuario, $usuarioId);
 if (!$actualizar->execute()) {
     $actualizar->close();
-    if ($usuarioActual['rol'] === 'club') {
-        $conn->rollback();
-    }
     http_response_code(500);
     exit('No se pudo actualizar el usuario.');
 }
 $actualizar->close();
 
-if ($usuarioActual['rol'] === 'club') {
-    $conn->commit();
-}
 if ((int) ($_SESSION['id'] ?? 0) === $usuarioId) {
     $_SESSION['usuario'] = $nombreUsuario;
 }
 
-header('Location: usuarios.php');
+header('Location: usuarios.php?ok=1');
 exit();

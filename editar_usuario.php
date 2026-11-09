@@ -99,11 +99,13 @@ $error = $errores[$_GET['error'] ?? ''] ?? '';
         <p class="mensaje-error"><?php echo $escape($error); ?></p>
     <?php } ?>
 
-    <form action="guardar_edicion_usuario.php" method="POST">
+    <form id="form-editar-usuario" action="guardar_edicion_usuario.php" method="POST">
         <input type="hidden" name="id" value="<?php echo (int) $usuario['id']; ?>">
 
         <label for="usuario">Usuario</label>
-        <input id="usuario" type="text" name="usuario" maxlength="50" value="<?php echo $escape($usuario['usuario']); ?>" required>
+        <input id="usuario" type="text" name="usuario" maxlength="43" value="<?php echo $escape($usuario['usuario']); ?>" aria-describedby="usuario-ayuda usuario-espacio-error" required>
+        <small id="usuario-ayuda">Hasta 4 palabras, mínimo 4 y máximo 10 letras cada una.</small>
+        <span id="usuario-espacio-error" class="ayuda-fecha" role="alert" hidden></span>
 
         <label>Rol</label>
         <p><?php echo $escape(ucfirst($usuario['rol'])); ?> (no editable)</p>
@@ -132,5 +134,90 @@ $error = $errores[$_GET['error'] ?? ''] ?? '';
         </div>
     </form>
 </main>
+<script>
+function configurarNombreCompuesto(campo, maxEspacios, avisoEspacio) {
+    function validar(mostrarAvisoEspacio = false) {
+        const palabras = campo.value.split(" ");
+        const patron = new RegExp(
+            "^\\p{Lu}[\\p{Ll}\\p{M}]*(?: \\p{Lu}[\\p{Ll}\\p{M}]*){0," + maxEspacios + "}$",
+            "u"
+        );
+        const invalido = !patron.test(campo.value)
+            || palabras.length > maxEspacios + 1
+            || palabras.some((palabra) => {
+                const cantidadLetras = Array.from(palabra.matchAll(/\p{L}/gu)).length;
+                return cantidadLetras < 4 || cantidadLetras > 10;
+            });
+        const mensaje = `Usa hasta ${maxEspacios + 1} palabras, con un mínimo de 4 y un máximo de 10 letras por palabra.`;
+        const espacioFinal = campo.value.endsWith(" ");
+
+        campo.setCustomValidity(
+            espacioFinal ? "Quita el espacio de más antes de guardar."
+                : invalido ? mensaje : ""
+        );
+        avisoEspacio.textContent = "Quita el espacio de más antes de guardar.";
+        avisoEspacio.hidden = !mostrarAvisoEspacio || !espacioFinal;
+    }
+
+    campo.addEventListener("input", () => {
+        let texto = "";
+        let letrasEnPalabra = 0;
+        let espacios = 0;
+        let ultimoFueEspacio = false;
+
+        for (const caracter of campo.value) {
+            if (/\p{L}/u.test(caracter)) {
+                if (letrasEnPalabra >= 10) {
+                    continue;
+                }
+
+                const convertido = letrasEnPalabra === 0
+                    ? caracter.toLocaleUpperCase("es-UY")
+                    : caracter.toLocaleLowerCase("es-UY");
+                if (!/^\p{L}$/u.test(convertido)) {
+                    continue;
+                }
+                texto += convertido;
+                letrasEnPalabra += 1;
+                ultimoFueEspacio = false;
+            } else if (
+                /\p{M}/u.test(caracter)
+                && letrasEnPalabra > 0
+                && !ultimoFueEspacio
+            ) {
+                texto += caracter;
+            } else if (
+                caracter === " "
+                && letrasEnPalabra > 0
+                && espacios < maxEspacios
+                && !ultimoFueEspacio
+            ) {
+                texto += caracter;
+                espacios += 1;
+                letrasEnPalabra = 0;
+                ultimoFueEspacio = true;
+            }
+        }
+
+        campo.value = texto;
+        validar();
+    });
+
+    campo.addEventListener("blur", validar);
+    return validar;
+}
+
+const usuario = document.getElementById("usuario");
+const errorEspacio = document.getElementById("usuario-espacio-error");
+const validarUsuario = configurarNombreCompuesto(usuario, 3, errorEspacio);
+const formularioUsuario = document.getElementById("form-editar-usuario");
+
+formularioUsuario.addEventListener("submit", (evento) => {
+    validarUsuario(true);
+    if (usuario.value.endsWith(" ") || !formularioUsuario.reportValidity()) {
+        evento.preventDefault();
+    }
+});
+</script>
 </body>
 </html>

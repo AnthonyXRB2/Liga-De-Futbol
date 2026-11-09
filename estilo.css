@@ -357,6 +357,24 @@ tr:last-child td { border-bottom: 0; }
 .aviso { color: #e2c36e; background: #39331f; }
 .mensaje-exito { color: #a7d6b7; background: #1e382b; }
 .mensaje-error { color: #e6a8ad; background: #40272c; }
+dialog.dialogo-editar-usuario {
+    width: min(440px, calc(100% - 32px));
+    max-width: none;
+    padding: 24px;
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    color: var(--tinta);
+    background: var(--superficie);
+    box-shadow: var(--sombra);
+}
+dialog.dialogo-editar-usuario::backdrop { background: rgba(0, 0, 0, .68); }
+.dialogo-editar-usuario h3 { margin: 0 0 18px; color: #c3d0d3; }
+.dialogo-editar-usuario form { width: 100%; margin: 0; padding: 0; border: 0; background: transparent; box-shadow: none; }
+.dialogo-editar-usuario small { display: block; margin: -10px 0 14px; color: #aab9bd; }
+.dialogo-editar-usuario .mensaje-error { margin: 0 0 14px; }
+.acciones-editar-usuario { display: flex; justify-content: flex-end; gap: 10px; }
+.acciones-editar-usuario .boton-cancelar-edicion { border: 1px solid var(--borde); color: var(--tinta); background: #293943; }
+.acciones-editar-usuario .boton-cancelar-edicion:hover { background: #344852; }
 
 /* Pestañas y enlaces rápidos para cambiar de torneo o sección. */
 .selector-torneos {
@@ -555,6 +573,7 @@ tr:last-child td { border-bottom: 0; }
 .comunicado p { margin: 8px 0; text-align: left; }
 .comunicado .fecha-comunicado { color: #aab9bd; font-size: .88rem; }
 .acciones-comunicados { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; margin: 14px 0 0; }
+.seccion-comunicados > .acciones-comunicados { justify-content: flex-end; margin: 24px 0; }
 .acciones-comunicados a { text-decoration: none; }
 .sin-comunicados { text-align: left; }
 .bienvenida {

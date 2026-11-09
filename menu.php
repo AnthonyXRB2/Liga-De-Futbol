@@ -48,6 +48,7 @@ $rolVisible = htmlspecialchars($rol, ENT_QUOTES, 'UTF-8');
             <div class="opciones-menu">
                 <?php if ($rol === 'admin') { ?>
                     <a href="usuarios.php">Usuarios</a>
+                    <a href="ver_documentos.php">Documentos De Los Jugadores</a>
                 <?php } ?>
                 <a href="cambiar_password.php">Contraseña</a>
             </div>
