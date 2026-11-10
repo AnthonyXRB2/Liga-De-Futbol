@@ -76,7 +76,7 @@ if ($rol === 'admin') {
                     <article class="comunicado">
                         <h3><?php echo htmlspecialchars($comunicado['titulo'], ENT_QUOTES, 'UTF-8'); ?></h3>
                         <?php if ($comunicado['fecha_publicacion'] !== null) { ?>
-                            <p class="fecha-comunicado">Publicado el <time datetime="<?php echo htmlspecialchars($comunicado['fecha_publicacion'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo date('d/m/Y H:i', strtotime($comunicado['fecha_publicacion'])); ?></time></p>
+                            <p class="fecha-comunicado">Publicado el <time datetime="<?php echo htmlspecialchars($comunicado['fecha_publicacion'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo date('d/m/Y h:i ', strtotime($comunicado['fecha_publicacion'])) . ucfirst(date('a', strtotime($comunicado['fecha_publicacion']))); ?></time></p>
                         <?php } else { ?>
                             <p class="fecha-comunicado">Fecha de publicaci&oacute;n no registrada.</p>
                         <?php } ?>
