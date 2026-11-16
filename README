@@ -16,8 +16,8 @@ Aplicación web para administrar la información de una liga de fútbol. Permite
    ```
 
 2. Inicia los servicios **Apache** y **MySQL** desde el panel de XAMPP.
-3. Crea la base de datos liga_futbol e importa el esquema inicial proporcionado por el equipo.
-4. Configura la conexión a MySQL en `Includes/conexion.php`.
+3. La base de datos no está incluida en este repositorio. Configura localmente una base llamada liga_futbol siguiendo las instrucciones proporcionadas por el equipo.
+4. Configura la conexión a MySQL en Includes/conexion.php con los datos de tu entorno local.
 5. Si corresponde, aplica las migraciones de `Database-Migrations`.
 6. Abre [http://localhost/Liga-De-Futbol/](http://localhost/Liga-De-Futbol/) en el navegador.
 
