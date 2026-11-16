@@ -1,0 +1,42 @@
+Sistema de Gestión de Liga de Fútbol
+
+Aplicación web para administrar la información de una liga de fútbol. Permite gestionar clubes, jugadores, partidos, tarjetas, comunicados y documentos de los jugadores, con opciones que varían según el tipo de usuario.
+
+Requisitos
+
+- [XAMPP](https://www.apachefriends.org/) o un entorno equivalente con Apache, PHP y MySQL.
+- Git.
+Instalación
+
+1. Abre una terminal en la carpeta `htdocs` de XAMPP y clona el repositorio:
+
+- 
+- 
+- 
+-
+2. Inicia los servicios *Apache* y **MySQL* desde el panel de XAMPP.
+3. Crea o importa la base de datos del proyecto en MySQL. La aplicación espera una base de datos llamada `liga_futbol`.
+4. Configura los datos de conexión a MySQL en `Includes/conexion.php`, según tu entorno.
+5. Si corresponde, aplica las migraciones incluidas en `Database-Migrations`.
+6. Abre la aplicación en el navegador: [http://localhost/Liga-De-Futbol/](http://localhost/Liga-De-Futbol/).
+💻 Uso
+
+1. Abre la dirección local de la aplicación e inicia sesión con una cuenta habilitada.
+2. Usa el menú de navegación para acceder a las secciones disponibles para tu rol.
+3. Los usuarios administradores pueden gestionar clubes, jugadores, partidos, tarjetas, usuarios, comunicados y documentos.
+4. Los usuarios de tipo club pueden consultar información de jugadores, competencias, documentos y comunicados, y realizar las acciones habilitadas para su cuenta.
+5. Para salir, selecciona *Cerrar Sesión*.
+🛠️ Tecnologías
+
+- PHP
+- MySQL
+- HTML
+- CSS
+- JavaScript
+- Apache / XAMPP para el entorno local
+🏢 Autoría y licencia
+
+Desarrollado por *Omnitech*.
+
+Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para ver sus términos.
+Copyright (c) 2026 Omnitech.
