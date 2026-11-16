@@ -33,6 +33,7 @@ $rolVisible = htmlspecialchars($rol, ENT_QUOTES, 'UTF-8');
             <a href="<?php echo app_url('Paginas/Documentos/ver_documentos.php'); ?>">Documentos Del Club</a>
             <a href="<?php echo app_url('Paginas/Comunicados/comunicados.php'); ?>">Comunicados</a>
             <a href="<?php echo app_url('Paginas/Documentos/subir_documentos.php'); ?>">Subir Ficha Médica</a>
+            <a href="<?php echo app_url('Paginas/Ingreso-y-Usuarios/cambiar_password.php'); ?>">Contraseña</a>
         <?php } else { ?>
             <a href="<?php echo app_url('Paginas/Inicio/index.php'); ?>">Inicio</a>
 
@@ -52,7 +53,6 @@ $rolVisible = htmlspecialchars($rol, ENT_QUOTES, 'UTF-8');
                     <a href="<?php echo app_url('Paginas/Ingreso-y-Usuarios/usuarios.php'); ?>">Usuarios</a>
                     <a href="<?php echo app_url('Paginas/Documentos/ver_documentos.php'); ?>">Documentos De Los Jugadores</a>
                 <?php } ?>
-                <a href="<?php echo app_url('Paginas/Ingreso-y-Usuarios/cambiar_password.php'); ?>">Contraseña</a>
             </div>
             </details>
 

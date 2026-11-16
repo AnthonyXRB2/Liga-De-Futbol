@@ -362,11 +362,13 @@ dialog.dialogo-editar-usuario {
     box-shadow: var(--sombra);
 }
 dialog.dialogo-editar-usuario::backdrop { background: rgba(0, 0, 0, .68); }
+.dialogo-editar-usuario [hidden] { display: none !important; }
 .dialogo-editar-usuario h3 { margin: 0 0 18px; color: #c3d0d3; }
 .dialogo-editar-usuario form { width: 100%; margin: 0; padding: 0; border: 0; background: transparent; box-shadow: none; }
 .dialogo-editar-usuario small { display: block; margin: -10px 0 14px; color: #aab9bd; }
 .dialogo-editar-usuario .mensaje-error { margin: 0 0 14px; }
-.acciones-editar-usuario { display: flex; justify-content: flex-end; gap: 10px; }
+.acciones-editar-usuario { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 10px; }
+.acciones-editar-usuario [data-eliminar-usuario] { margin-left: auto; }
 .acciones-editar-usuario .boton-cancelar-edicion { border: 1px solid var(--borde); color: var(--tinta); background: #293943; }
 .acciones-editar-usuario .boton-cancelar-edicion:hover { background: #344852; }
 

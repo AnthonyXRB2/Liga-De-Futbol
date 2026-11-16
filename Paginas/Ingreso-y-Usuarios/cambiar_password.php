@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../../Includes/rutas.php';
-// Limita este formulario de cambio de clave a administradores autenticados.
+// Limita este formulario al cambio de contraseña de la cuenta autenticada.
 session_start();
 require_once __DIR__ . '/../../Includes/restringir_club.php';
 if(!isset($_SESSION["usuario"])){
@@ -8,9 +8,9 @@ if(!isset($_SESSION["usuario"])){
     exit();
 }
 
-if (($_SESSION["rol"] ?? "") !== "admin") {
+if (!in_array($_SESSION["rol"] ?? "", ["admin", "club"], true)) {
     http_response_code(403);
-    die("Solo el administrador puede cambiar su contraseña.");
+    die("No tienes permiso para cambiar esta contraseña.");
 }
 
 require_once __DIR__ . '/../../Includes/conexion.php';
