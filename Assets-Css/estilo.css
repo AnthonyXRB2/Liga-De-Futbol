@@ -213,6 +213,8 @@ p { line-height: 1.6; }
 .ayuda-fecha { display: inline-block; margin: -10px 0 16px; color: #e0a1a5; font-weight: 700; }
 .ayuda-fecha[hidden] { display: none; }
 .acciones-pagina { margin: 20px 0; }
+.accion-agregar-jugador { text-align: right; }
+.boton-agregar-club { margin-left: 24px; }
 
 /* Formularios, campos y botones reutilizados en el sitio. */
 form {
@@ -279,15 +281,16 @@ button:hover, .boton:hover {
     box-shadow: none;
 }
 .campos-filtros {
-    display: grid;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     align-items: stretch;
+    justify-content: center;
     gap: 18px;
 }
 .campo-filtro {
     display: flex;
     min-width: 0;
-    grid-column: span 3;
+    flex: 0 1 calc((100% - 54px) / 4);
     flex-direction: column;
     gap: 12px;
     padding: 18px;
@@ -311,7 +314,6 @@ button:hover, .boton:hover {
     background-color: #16232b;
 }
 .campo-filtro input { min-width: 0; margin: 0; }
-.campo-busqueda { grid-column: span 6; }
 .acciones-filtros {
     display: flex;
     align-items: center;
@@ -618,9 +620,7 @@ dialog.dialogo-editar-usuario::backdrop { background: rgba(0, 0, 0, .68); }
     .pestana-torneo { padding: 10px 8px; text-align: center; }
     .atajos-competencia { gap: 8px; }
     .atajo-competencia { min-height: 52px; gap: 8px; padding: 10px; font-size: .9rem; }
-    .campos-filtros { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 18px; }
-    .campo-filtro { grid-column: span 3; }
-    .campo-busqueda { grid-column: span 6; }
+    .campo-filtro { flex-basis: calc((100% - 18px) / 2); }
     .filtros-jugadores { gap: 20px; }
     .campo-filtro { padding: 16px; }
 }
@@ -633,9 +633,7 @@ dialog.dialogo-editar-usuario::backdrop { background: rgba(0, 0, 0, .68); }
     .atajo-competencia { min-height: 46px; }
     .resumen-inicio { gap: 10px; }
     .dato-inicio { min-height: 88px; padding: 14px; }
-    .campos-filtros { grid-template-columns: minmax(0, 1fr); gap: 16px; }
-    .campo-filtro,
-    .campo-busqueda { grid-column: 1; }
+    .campo-filtro { flex-basis: 100%; }
     .filtros-jugadores { gap: 18px; }
     .campo-filtro { gap: 10px; padding: 16px; }
     .acciones-filtros { align-items: stretch; flex-direction: column; gap: 12px; }

@@ -32,7 +32,7 @@ require_once __DIR__ . '/../../Includes/conexion.php';
 <?php if($esAdmin){ ?>
 
 <a href="<?php echo app_url('Paginas/Clubes/agregar_club.php'); ?>">
-    <button>➕ Agregar Club</button>
+    <button class="boton-agregar-club">Agregar Club</button>
 </a>
 
 <br><br>

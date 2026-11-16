@@ -91,7 +91,7 @@ function h($valor)
     </p>
 
     <?php if ($rol === "admin") { ?>
-        <p class="acciones-pagina"><a class="boton" href="<?php echo app_url('Paginas/Jugadores/agregar_jugador.php'); ?>">＋ Agregar jugador</a></p>
+        <p class="acciones-pagina accion-agregar-jugador"><a class="boton" href="<?php echo app_url('Paginas/Jugadores/agregar_jugador.php'); ?>">Agregar Jugador</a></p>
     <?php } ?>
 
     <form class="filtros-jugadores" method="GET">

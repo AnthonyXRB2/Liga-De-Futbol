@@ -213,7 +213,7 @@ function escapar($valor)
     <nav class="selector-torneos" aria-label="Seleccionar competencia">
         <?php foreach ($torneos as $clave => $nombre) { ?>
             <a class="pestana-torneo torneo-<?php echo escapar($clave); ?> <?php echo $clave === $claveTorneo ? 'activa' : ''; ?>"
-               href="<?php echo app_url('Paginas/Competencia/tabla_posiciones.php'); ?>?torneo=<?php echo escapar($clave); ?>"
+               href="<?php echo app_url('Paginas/Competencia/tabla_posiciones.php'); ?>?torneo=<?php echo escapar($clave); ?>#clasificacion"
                <?php echo $clave === $claveTorneo ? 'aria-current="page"' : ''; ?>>
                 <?php echo escapar($nombre); ?>
             </a>
@@ -264,7 +264,7 @@ function escapar($valor)
     <!-- Permite filtrar el fixture y administrar resultados o suspensiones. -->
     <section class="panel-competencia" id="partidos" aria-labelledby="titulo-partidos">
         <h3 id="titulo-partidos">Partidos y fixture <span><?php echo count($fixture); ?> en total</span></h3>
-        <form class="filtros-competencia" method="GET" action="<?php echo app_url('Paginas/Competencia/tabla_posiciones.php'); ?>">
+        <form class="filtros-competencia" method="GET" action="<?php echo app_url('Paginas/Competencia/tabla_posiciones.php'); ?>#partidos">
             <input type="hidden" name="torneo" value="<?php echo escapar($claveTorneo); ?>">
             <input type="hidden" name="club_sancion" value="<?php echo $filtroClubSanciones ?: ''; ?>">
             <input type="hidden" name="categoria_sancion" value="<?php echo escapar($filtroCategoriaSanciones); ?>">
@@ -359,7 +359,7 @@ function escapar($valor)
     <section class="panel-competencia" id="sanciones" aria-labelledby="titulo-sanciones">
         <h3 id="titulo-sanciones">Sanciones y tarjetas <span><?php echo count($sanciones); ?> registros</span></h3>
         <p class="ayuda">Registro disciplinario de los jugadores de esta competencia.</p>
-        <form class="filtros-competencia" method="GET" action="<?php echo app_url('Paginas/Competencia/tabla_posiciones.php'); ?>">
+        <form class="filtros-competencia" method="GET" action="<?php echo app_url('Paginas/Competencia/tabla_posiciones.php'); ?>#sanciones">
             <input type="hidden" name="torneo" value="<?php echo escapar($claveTorneo); ?>">
             <input type="hidden" name="categoria_partidos" value="<?php echo escapar($filtroCategoriaPartidos); ?>">
             <div class="filtro-competencia-campo">
