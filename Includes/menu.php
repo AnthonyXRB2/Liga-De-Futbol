@@ -29,7 +29,7 @@ $rolVisible = htmlspecialchars($rol, ENT_QUOTES, 'UTF-8');
         <?php if ($rol === 'club') { ?>
             <a href="<?php echo app_url('Paginas/Inicio/index.php'); ?>">Inicio</a>
             <a href="<?php echo app_url('Paginas/Jugadores/jugadores.php'); ?>">Jugadores</a>
-            <a href="<?php echo app_url('Paginas/Competencia/tabla_posiciones.php'); ?>">Competencia y Sanciones</a>
+            <a href="<?php echo app_url('Paginas/Competencia/tabla_posiciones.php'); ?>">Competencias y Sanciones</a>
             <a href="<?php echo app_url('Paginas/Documentos/ver_documentos.php'); ?>">Documentos Del Club</a>
             <a href="<?php echo app_url('Paginas/Comunicados/comunicados.php'); ?>">Comunicados</a>
             <a href="<?php echo app_url('Paginas/Documentos/subir_documentos.php'); ?>">Subir Ficha Médica</a>
@@ -42,7 +42,7 @@ $rolVisible = htmlspecialchars($rol, ENT_QUOTES, 'UTF-8');
             <div class="opciones-menu">
                 <a href="<?php echo app_url('Paginas/Clubes/clubes.php'); ?>">Clubes</a>
                 <a href="<?php echo app_url('Paginas/Jugadores/jugadores.php'); ?>">Jugadores</a>
-                <a href="<?php echo app_url('Paginas/Competencia/tabla_posiciones.php'); ?>">Competencia y Sanciones</a>
+                <a href="<?php echo app_url('Paginas/Competencia/tabla_posiciones.php'); ?>">Competencias y Sanciones</a>
             </div>
             </details>
 

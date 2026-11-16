@@ -53,10 +53,14 @@ p { line-height: 1.6; }
     width: 260px;
     flex-direction: column;
     overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     color: #fff;
     background: linear-gradient(165deg, #0c151d, #172831);
     box-shadow: 5px 0 22px rgba(0, 0, 0, .45);
 }
+.sidebar::-webkit-scrollbar { display: none; }
 .encabezado-principal { background: rgba(0, 0, 0, .12); }
 .marca-liga {
     padding: 24px 20px 16px;
@@ -317,7 +321,8 @@ button:hover, .boton:hover {
 .acciones-filtros a { font-weight: 700; }
 .form-accion { width: auto; margin: 0; padding: 0; border: 0; background: none; box-shadow: none; }
 .acciones-formulario { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
-.acciones-edicion-jugador { justify-content: center; }
+.acciones-agregar-jugador { width: min(620px, 100%); margin: 0 auto 24px; justify-content: center; }
+.acciones-edicion-jugador { width: min(620px, 100%); margin: 0 auto 24px; justify-content: center; }
 button:disabled { cursor: not-allowed; opacity: .55; transform: none; box-shadow: none; }
 .acciones-jugador { display: flex; align-items: center; justify-content: center; gap: 8px; }
 .boton-editar { min-height: 36px; padding: 6px 12px; }
@@ -461,19 +466,6 @@ dialog.dialogo-editar-usuario::backdrop { background: rgba(0, 0, 0, .68); }
     color: #c3d0d3;
     box-shadow: var(--sombra);
 }
-.atajo-competencia span {
-    display: grid;
-    width: 32px;
-    height: 32px;
-    flex: 0 0 32px;
-    place-items: center;
-    border-radius: 9px;
-    color: var(--azul);
-    background: #293943;
-    font-size: .75rem;
-    font-weight: 850;
-}
-
 /* Clasificación, fixture y acciones de partidos y sanciones. */
 .regla-puntos { margin: 0 0 20px; color: #aab9bd; font-size: 14px; }
 .tabla-clasificacion, .tabla-fixture { margin: 16px 0 28px; }
@@ -626,7 +618,6 @@ dialog.dialogo-editar-usuario::backdrop { background: rgba(0, 0, 0, .68); }
     .pestana-torneo { padding: 10px 8px; text-align: center; }
     .atajos-competencia { gap: 8px; }
     .atajo-competencia { min-height: 52px; gap: 8px; padding: 10px; font-size: .9rem; }
-    .atajo-competencia span { width: 28px; height: 28px; flex-basis: 28px; }
     .campos-filtros { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 18px; }
     .campo-filtro { grid-column: span 3; }
     .campo-busqueda { grid-column: span 6; }

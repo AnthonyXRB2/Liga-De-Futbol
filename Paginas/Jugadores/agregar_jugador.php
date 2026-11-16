@@ -99,9 +99,12 @@ while($club = mysqli_fetch_assoc($clubes)){
 <input type="text" name="velocidad" inputmode="decimal" maxlength="3" pattern="[1-9],[0-9]" data-decimal="velocidad" aria-describedby="velocidad_error" placeholder="Ej: 8,5">
 <span id="velocidad_error" class="ayuda-fecha" role="alert" hidden></span><br><br>
 
-<button type="submit">Guardar</button>
-
 </form>
+
+<div class="acciones-formulario acciones-agregar-jugador">
+    <button type="submit" form="form-jugador">Agregar</button>
+    <a href="<?php echo app_url('Paginas/Jugadores/jugadores.php'); ?>">Cancelar</a>
+</div>
 
 <script>
 // Actualiza la categoría preliminar y valida el año de nacimiento.

@@ -221,9 +221,9 @@ function escapar($valor)
     </nav>
 
     <nav class="atajos-competencia" aria-label="Secciones de competencia">
-        <a class="atajo-competencia" href="#clasificacion"><span>01</span> Clasificación</a>
-        <a class="atajo-competencia" href="#partidos"><span>02</span> Partidos</a>
-        <a class="atajo-competencia" href="#sanciones"><span>03</span> Sanciones</a>
+        <a class="atajo-competencia" href="#clasificacion">Clasificación</a>
+        <a class="atajo-competencia" href="#partidos">Partidos</a>
+        <a class="atajo-competencia" href="#sanciones">Sanciones</a>
     </nav>
 
     <!-- Muestra la tabla calculada a partir de los resultados registrados. -->

@@ -117,11 +117,11 @@ $escape = static fn($valor) => htmlspecialchars((string) $valor, ENT_QUOTES, 'UT
     </form>
 
     <div class="acciones-formulario acciones-edicion-jugador">
-        <button type="submit" form="form-editar-jugador">Guardar cambios</button>
+        <button type="submit" form="form-editar-jugador">Guardar</button>
         <a href="<?php echo app_url('Paginas/Jugadores/jugadores.php'); ?>">Cancelar</a>
         <form class="form-accion" action="<?php echo app_url('Procesos/Jugadores/eliminar_jugador.php'); ?>" method="POST" onsubmit="return confirm('¿Eliminar este jugador y sus tarjetas y documentos asociados?');">
             <input type="hidden" name="id" value="<?php echo (int) $jugador['id']; ?>">
-            <button class="boton-peligro" type="submit">Eliminar jugador</button>
+            <button class="boton-peligro" type="submit">Eliminar</button>
         </form>
     </div>
 </main>
