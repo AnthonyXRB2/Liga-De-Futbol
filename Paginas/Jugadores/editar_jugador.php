@@ -114,11 +114,16 @@ $escape = static fn($valor) => htmlspecialchars((string) $valor, ENT_QUOTES, 'UT
         <label for="velocidad">Velocidad promedio (m/s)</label>
         <input id="velocidad" type="number" name="velocidad" min="0" max="9.9" step="0.1" value="<?php echo $escape($jugador['velocidad']); ?>">
 
-        <div class="acciones-formulario">
-            <button type="submit">Guardar cambios</button>
-            <a href="<?php echo app_url('Paginas/Jugadores/jugadores.php'); ?>">Cancelar</a>
-        </div>
     </form>
+
+    <div class="acciones-formulario acciones-edicion-jugador">
+        <button type="submit" form="form-editar-jugador">Guardar cambios</button>
+        <a href="<?php echo app_url('Paginas/Jugadores/jugadores.php'); ?>">Cancelar</a>
+        <form class="form-accion" action="<?php echo app_url('Procesos/Jugadores/eliminar_jugador.php'); ?>" method="POST" onsubmit="return confirm('¿Eliminar este jugador y sus tarjetas y documentos asociados?');">
+            <input type="hidden" name="id" value="<?php echo (int) $jugador['id']; ?>">
+            <button class="boton-peligro" type="submit">Eliminar jugador</button>
+        </form>
+    </div>
 </main>
 <script>
 // Conserva la cédula original y prepara la validación de cambios.

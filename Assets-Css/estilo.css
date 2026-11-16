@@ -317,16 +317,10 @@ button:hover, .boton:hover {
 .acciones-filtros a { font-weight: 700; }
 .form-accion { width: auto; margin: 0; padding: 0; border: 0; background: none; box-shadow: none; }
 .acciones-formulario { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+.acciones-edicion-jugador { justify-content: center; }
 button:disabled { cursor: not-allowed; opacity: .55; transform: none; box-shadow: none; }
 .acciones-jugador { display: flex; align-items: center; justify-content: center; gap: 8px; }
 .boton-editar { min-height: 36px; padding: 6px 12px; }
-.menu-acciones-jugador { position: relative; }
-.menu-acciones-jugador summary { padding: 7px 10px; border: 1px solid var(--borde); border-radius: 8px; color: #c3d0d3; cursor: pointer; font-weight: 700; list-style: none; }
-.menu-acciones-jugador summary::-webkit-details-marker { display: none; }
-.menu-acciones-jugador summary::after { content: " ▾"; color: var(--azul); }
-.menu-acciones-jugador[open] summary::after { content: " ▴"; }
-.menu-acciones-jugador .form-accion { position: absolute; z-index: 5; top: calc(100% + 6px); right: 0; min-width: 130px; padding: 8px; border: 1px solid var(--borde); border-radius: 10px; background: var(--superficie); box-shadow: var(--sombra); }
-.menu-acciones-jugador .boton-peligro { width: 100%; }
 
 /* Presentación general de tablas y mensajes de estado. */
 /* Da formato a las tablas y a los estados de carga o validación. */

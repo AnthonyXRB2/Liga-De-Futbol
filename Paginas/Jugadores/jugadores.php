@@ -188,13 +188,6 @@ function h($valor)
                             <?php if ($rol === "admin") { ?>
                                 <td class="acciones-jugador">
                                     <a class="boton boton-editar" href="<?php echo app_url('Paginas/Jugadores/editar_jugador.php'); ?>?id=<?php echo (int) $fila["id"]; ?>">Editar</a>
-                                    <details class="menu-acciones-jugador">
-                                        <summary>Más</summary>
-                                        <form class="form-accion" action="<?php echo app_url('Procesos/Jugadores/eliminar_jugador.php'); ?>" method="POST" onsubmit="return confirm('¿Eliminar este jugador y sus tarjetas y documentos asociados?');">
-                                            <input type="hidden" name="id" value="<?php echo (int) $fila["id"]; ?>">
-                                            <button class="boton-peligro" type="submit">Eliminar</button>
-                                        </form>
-                                    </details>
                                 </td>
                             <?php } ?>
                         </tr>
